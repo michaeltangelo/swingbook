@@ -131,17 +131,13 @@
 <h2>Wireframes</h2>
 
 /home   -homepage where users can choose to register or login
-![Alt text](final-project/public/images/image1.jpg?raw=true "homepage")
+![Alt text](documentation/images/homepage.jpg?raw=true "homepage")
 
-/home/login   -user log in
-![Alt text](final-project/public/images/image2.jpg?raw=true "log in")
+/events   -users can see events
+![Alt text](documentation/images/events.jpg?raw=true "events")
 
-/home/log-sleep-time   -users update their sleeping time
-![Alt text](final-project/public/images/image3.jpg?raw=true "log sleep time")
-
-/home/view-sleep-log   -users can view their sleeping log
-![Alt text](final-project/public/images/image4.jpg?raw=true "view log")
-
+/slug   -users' biography. slug is name or username
+![Alt text](documentation/images/bio.jpg?raw=true "view log")
 
 <h2>Site Map </h2>
 ![Alt text](final-project/public/images/sitemap.jpg?raw=true "site map")
