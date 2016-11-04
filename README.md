@@ -140,7 +140,7 @@
 ![Alt text](documentation/images/bio.jpg?raw=true "view log")
 
 <h2>Site Map </h2>
-![Alt text](final-project/public/images/sitemap.jpg?raw=true "site map")
+![Alt text](documentation/images/sitemap.jpg?raw=true "site map")
 
 
 <h2>User Stories</h2>
