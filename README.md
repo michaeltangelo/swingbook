@@ -1,7 +1,7 @@
-<h1> Sleep Tracker</h1>
+<h1>SwingBook</h1>
 
 <h2>Overview</h2>
->Having enough sleep is crtical for everybody to re-energize, especially for college students. This website, Sleep Tracker, helps users to keep a log of their sleep time. Users can register and login, which allows the Sleep Tracker to keep a personal record of how many hours of sleep each user gets. Registered users can then choose to view their sleep log by weeks, months, or years, if they keep log on their sleeping schedule. 
+>"Should I go swing dancing today?" This age old question is asked dozens, if not hundreds, if not *thousands* of times a day by swing dancers around the world. Although the answer should always be, "yes," sometimes it helps to know who else will be going out that night. SwingBook is a site that allows users to view swing events all around the city (NYC only for now) and indicate whether they intend to attend the event. The core feature of SwingBook is the ability to view other attending dancers and connect with them (before or after) the event. Additionally, users will have the option to include a brief, personal recap/note about which swanky new move they learned at the event itself. Users will have a brief bio describing their level of experience with swing dancing, what they want to get better at, and their 'favorite move', which will be visible to all. Additional features can be added.
 
 <h2>Data Model</h2>
 
@@ -14,27 +14,119 @@
     // * (even though I think it is weird to log on others' sleep schedule )
     var User = new mongoose.Schema({
         //username, password provided by plugin
-        lists:  [{ type: mongoose.Schema.Types.ObjectId, ref: 'List' }]
+
+        // list of friends by id
+        friends: [_id],
+
+        // dance experience level
+        level: level,
+
+        // biography object
+        biography: bio,
+
+        // List of attending and attended events
+        eventsList: [event]
     });
-  
-  
-    // an sleep (or group of the same sleep in a sleep list)
-    // * includes the bedTime and wakeupTime 
-    var Sleep = new mongoose.Schema({
-        badTime: {type: Number, required: true},
-        wakeupTime: {type: Number, required: true}
-    },{
-        _id: true    
+
+    // bio
+    // *used to represent each user's specific bio
+    var Bio = new mongoose.Schema({
+        // user ID - the link to the user the bio belongs to
+        userId: ObjectId(user),
+        name: text,
+        about: text,
+        // User's favorite move
+        favoriteMove: move,
+
+        // User's favorite event
+        favoriteEvent: event,
+
+        // List of user's past attended events
+        history: [event],
+
+        // The level of the user - taken from level from user field
+        level: level
     });
-    
-    // a sleep list
-    // * each list must have a related user
-    // * a list can have 0 or more items
-    var List = new mongoose.Schema({
-        user: user: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
-        createdAt: {type: Date, required: true},
-        sleep: [Sleep]
-    })
+
+    // move
+    // *used to represent a swing dance move
+    var Move = new mongoose.Schema( {
+        name: text,
+        difficulty: level,
+
+        // what category of move is it
+        type: type,
+        description: text,
+        video: gif [optional to show the move itself]
+    });
+
+    // event
+    // *represents a swing dance event
+    var Event = new mongoose.Schema( {
+        date: date,
+        name: text,
+        location: location,
+
+        // The maybe attending users
+        maybes: [user],
+
+        // the for sure attending users
+        attending: [user],
+
+        messageBoard: [message],
+        mostRecentNote: note,
+
+        // The average level of dancers at the event
+        avgLevel: number
+    });
+
+    // Note
+    // *represents a note about a specific event
+    var Note = new mongoose.Schema( {
+        event: event,
+        note: text,
+        user: objectId(user),
+        date: date,
+
+        // The moves 'tagged' in the note
+        moves: [move]
+    });
+
+    // post
+    // *represents a post on an event page
+    var Post = new mongoose.Schema( {
+        event: event,
+        note: text,
+        user: objectId(user),
+        date: date
+    });
+
+    // type
+    // *represents a type of swing dance move
+    var MoveType = new mongoose.Schema( {
+        name: text (examples are 'swing out', 'pass', 'charleston', 'misc')
+    });
+
+    // Level
+    // *represents the level of difficulty or skill of a dancer or move
+    var Level = new mongoose.Schema( {
+        title: text (e.g. intermediate, beginner, advanced),
+        level: number (1-5)
+    });
+
+    // Diary
+    // *represents the diary of a swing dancer to have notes about moves and events
+    var Diary = new mongoose.Schema( {
+        entries: [entry]
+    });
+
+    // Entry
+    // *represents a single entry in a diary
+    var Entry = new mongoose.Schema( {
+        date: date,
+        text: text,
+        moves: [move]
+    });
     
 <h2>Wireframes</h2>
 
@@ -56,14 +148,16 @@
 
 
 <h2>User Stories</h2>
->1. as a user, I can add my sleeping schedule to the website
->2. as a user, I can create another sleeping lot for my friends/families
->3. as a user, I can view all of the sleeping log I've created
-
+>1. as a user, I can view events, see the attendees, and choose to attend them
+>2. as a user, I can add a friend
+>3. as a user, I can make a note about an event and share what I learned at the event
+>4. as a user, I can make a post in the event page for all to see
+>5. as a user, I can keep a diary about my progress with swing dance and the moves i've learned and want to learn
 
 <h2>Research Topics</h2>
->1. Integrate user authentication
->2. How to perform client side form validation using a JavaScript library
->3. How to perform some amazing new JavaScript library
+>1. Integrate user authentication (perhaps with Facebook or google login)
+>2. How to perform client side form validation using a JavaScript library (ensure forms get correct data)
+>3. Use React.js (to get acclimated with Facebook workflow)
+>4. Use CSS framework
 
 
