@@ -14,17 +14,23 @@ function($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise('home');
 }]);
 	
+app.factory('events', [function(){
+	var o = {
+		events: [
+			{name: "Frim Fram", date: 'Thurs 9:00pm-1:00am', numAttendees: 0},
+			{name: 'Brooklyn Swings', date: 'Fridays 7:30pm-10:00pm', numAttendees: 0},
+			{name: 'Swing Practice', date: 'Tuesdays 9:00pm-11:00pm', numAttendees: 0}
+		]
+	};
+	return o;
+}]);
+
 app.controller('MainCtrl', [
 	'$scope',
 	'events',
 	function($scope, events){
-		$scope.events = events;
+		$scope.events = events.events;
 		$scope.test = 'Hello world!';
-		$scope.events = [
-			{name: "Frim Fram", date: 'Thurs 9:00pm-1:00am', numAttendees: 0},
-			{name: 'Brooklyn Swings', date: 'Fridays 7:30pm-10:00pm', numAttendees: 0},
-			{name: 'Swing Practice', date: 'Tuesdays 9:00pm-11:00pm', numAttendees: 0}
-		];
 		$scope.addEvent = function() {
 			if(!$scope.name || $scope.name === '') return;
 			if(!$scope.date || $scope.date === '') return;
@@ -34,10 +40,3 @@ app.controller('MainCtrl', [
 			event.numAttendees++;
 		}
 }]);
-
-app.factory('events', [function(){
-	var o = {
-		events: []
-	};
-	return o;
-}])
