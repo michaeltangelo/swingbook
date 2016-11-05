@@ -1,0 +1,24 @@
+{
+  "name": "mlt365-final-project",
+  "version": "1.0.0",
+  "description": "SwingBook is a social media-esque site to help swing dancers connect and attend events together.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyu-csci-ua-0480-001-fall-2016/mlt365-final-project.git"
+  },
+  "author": "Michael Tan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nyu-csci-ua-0480-001-fall-2016/mlt365-final-project/issues"
+  },
+  "homepage": "https://github.com/nyu-csci-ua-0480-001-fall-2016/mlt365-final-project#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongoose": "^4.6.6"
+  }
+}

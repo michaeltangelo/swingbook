@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>SwingBook!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0-rc.0/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
+    <script src="js/app.js"></script>
+    <link rel="stylesheet" href="css/style.css"> 
+  </head>
+  <body ng-app="swingBook" ng-controller="MainCtrl">
+    <h1>Welcome to SwingBook</h1>
+    <div>
+      {{test}}
+    </div>
+    <h2>Events</h2>
+    <div ng-repeat="event in events">
+      <h3>{{event.name}}</h3>
+      {{event.date}}<br>
+      {{event.numAttendees}} Attending<br>
+      <button ng-click="addAttendee(event)">+ I am attending</button><br>
+    </div>
+  <form ng-submit="addEvent()">
+    <h2>Add New Event</h2>
+    Name of Event: <input type="text" ng-model="name"></input><br>
+    Date: <input type="text" ng-model="date"></input><br>
+    <button type="submit">Post</button>
+  </form>
+  <!--
+  <ui-view></ui-view>
+
+  <script type="text/ng-template" id="/home.html">
+    <div class="page-header">
+      <h1>Swing Book</h1>
+    </div>
+
+    <h3>something else</h3>
+  </script>
+-->
+  </body>
+</html>
