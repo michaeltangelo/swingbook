@@ -8,17 +8,19 @@ var mongoose = require('mongoose');
 var bCrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 var expressSession = require('express-session');
 var flash = require('connect-flash');
 
 // Non auto express-generator requires
 var db = require('./db.js');
 var User = mongoose.model('User');
+var fbConfig = require('./public/javascripts/fb.js');
 
-var index = require('./routes/index');
+var index = require('./routes/index')(passport);
 var users = require('./routes/users');
 
-var app = express();
+var app = express();	
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,6 +47,8 @@ app.use(flash());
 app.use('/', index);
 app.use('/users', users);
 
+// referenced from:
+// https://code.tutsplus.com/tutorials/authenticating-nodejs-applications-with-passport--cms-21619
 // passport/login.js
 passport.use('login', new LocalStrategy({
     passReqToCallback : true
@@ -85,6 +89,8 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+// Also referenced from:
+// https://code.tutsplus.com/tutorials/authenticating-nodejs-applications-with-passport--cms-21619
 passport.use('register', new LocalStrategy({
     passReqToCallback : true
   },
@@ -121,7 +127,7 @@ passport.use('register', new LocalStrategy({
               throw err;  
             }
             console.log('User Registration succesful');    
-            return done(null, newUser);
+            return done(null, newUser, req.flash('message','User Registration successful'));
           });
         }
       });
@@ -131,6 +137,63 @@ passport.use('register', new LocalStrategy({
     // the method in the next tick of the event loop
     process.nextTick(findOrCreateUser);
  }));
+
+passport.use('facebook', new FacebookStrategy({
+  clientID        : fbConfig.appID,
+  clientSecret    : fbConfig.appSecret,
+  callbackURL     : fbConfig.callbackUrl,
+  profileFields   : ['id','friends', 'email', 'first_name', 'last_name']
+},
+ 
+  // facebook will send back the tokens and profile
+  function(access_token, refresh_token, profile, done) {
+  	console.log("\n\nProfile: " + JSON.stringify(profile)+"\n\n");
+    // asynchronous
+    process.nextTick(function() {
+     
+      // find the user in the database based on their facebook id
+      User.findOne({ 'fb.id' : profile.id }, function(err, user) {
+ 
+        // if there is an error, stop everything and return that
+        // ie an error connecting to the database
+        if (err){
+        	console.log("err in User.findOne: " + err);
+          return done(err);
+      	}
+ 
+          // if the user is found, then log them in
+          if (user) {
+          	console.log("User is found.");
+            return done(null, user); // user found, return that user
+          } else {
+            // if there is no user found with that facebook id, create them
+            var newUser = new User();
+            console.log("Default newUser: " + newUser);
+			newUser.joined = new Date();
+
+            // set all of the facebook information in our user model
+            newUser.fb.id    = profile.id; // set the users facebook id                 
+            newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user                    
+            newUser.fb.firstName  = profile.name.givenName;
+            newUser.fb.lastName = profile.name.familyName; // look at the passport user profile to see how names are returned
+            newUser.username = newUser.fb.firstName + " " +newUser.fb.lastName;
+            console.log("4Set all newUser properties. newUser is now: " + newUser);
+            console.log("profile: " + JSON.stringify(profile));
+            // newUser.fb.email = profile.emails[0].value; // facebook can return multiple emails so we'll take the first
+ 
+            // save our user to the database
+            newUser.save(function(err) {
+              if (err)
+                throw err;
+ 
+              // if successful, return the new user
+              return done(null, newUser);
+            });
+         } 
+      });
+    });
+}));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

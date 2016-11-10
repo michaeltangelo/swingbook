@@ -64,6 +64,8 @@
     // *represents a swing dance event
     var Event = new mongoose.Schema( {
         date: date,
+        start: time,
+        end: time,
         name: text,
         location: location,
 
@@ -72,6 +74,8 @@
 
         // the for sure attending users
         attending: [user],
+
+        not-attending: [user],
 
         messageBoard: [message],
         mostRecentNote: note,

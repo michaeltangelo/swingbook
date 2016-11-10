@@ -58,8 +58,8 @@ var User = new mongoose.Schema({
 		first: String,
 		last: {type: String, trim: true}
 	},
-	username: { type: String, required: true, unique: true },
-	password: { type: String, required: true },
+	username: { type: String, unique: true },
+	password: { type: String},
 	joined: Date,
 	lastUpdated: Date,
 	friends: [mongoose.Schema.ObjectId],
@@ -70,6 +70,13 @@ var User = new mongoose.Schema({
 		favoriteMove: Move,
 		favoriteEvent: Event,
 		pastEvents: [Event],
+	},
+	fb: {
+		id: String,
+		access_token: String,
+		firstName: String,
+		lastName: String,
+		email: String
 	}
 });
 

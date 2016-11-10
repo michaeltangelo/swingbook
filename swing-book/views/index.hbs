@@ -7,8 +7,10 @@
 <h1>LOGIN</h1>
 <form method="POST" action="/login">
 	Username: <input type="text" name="username" placeholder="username"><br>
-	Password: <input type="text" name="password" placeholder="password"><br>
+	Password: <input type="password" name="password" placeholder="password"><br>
 	<input type="submit" value="Login">
 </form>
 <a href="/register">Create a new account</a>
 <p style="color:red;">{{message}}</p>
+
+<a href="/login/facebook">Login With Facebook</a>

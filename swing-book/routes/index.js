@@ -5,48 +5,76 @@ var User = mongoose.model('User');
 var Event = mongoose.model('Event');
 var passport = require('passport');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-	res.render('index', {message: req.flash('message')});
-	// var newUser = new User( {
-	// 	name: {first: "Joe", last: "Fursoza"},
-	// 	username: "jversoza",
-	// 	password: "cats",
-	// });
 
-	// var theDate = new Date();
-	// var newEvent = new Event( {
-	// 	date: theDate,
-	// 	start: "9:00PM",
-	// 	end: "1:00AM",
-	// 	name: "Frim Fram",
-	// 	location: "412 8th Ave, 6th Floor"
-	// });
-	// var context = {title: 'Express', User: newUser, Event: newEvent};
-	// res.render('index', context);
-});
+// As with any middleware it is quintessential to call next()
+// if the user is authenticated
+var isAuthenticated = function (req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.redirect('/');
+}
+module.exports = function(passport) {
+	/* GET home page. */
+	router.get('/', function(req, res, next) {
+		res.render('index', {message: req.flash('message')});
+		// var newUser = new User( {
+		// 	name: {first: "Joe", last: "Fursoza"},
+		// 	username: "jversoza",
+		// 	password: "cats",
+		// });
 
-router.post('/login', passport.authenticate('login', {
-	successRedirect: '/home',
-	failureRedirect: '/',
-	failureFlash : true
-}));
+		// var theDate = new Date();
+		// var newEvent = new Event( {
+		// 	date: theDate,
+		// 	start: "9:00PM",
+		// 	end: "1:00AM",
+		// 	name: "Frim Fram",
+		// 	location: "412 8th Ave, 6th Floor"
+		// });
+		// var context = {title: 'Express', User: newUser, Event: newEvent};
+		// res.render('index', context);
+	});
 
-router.get('/register', function(req, res) {
-	res.render('register', {message: req.flash('message')});
-});
+	router.post('/login', passport.authenticate('login', {
+		successRedirect: '/home',
+		failureRedirect: '/',
+		failureFlash : true
+	}));
 
-router.get('/home', function(req,res) {
-	res.render('index', {Event: "I AM HOME PAGE"});
-});
+	router.get('/register', function(req, res, next) {
+		res.render('register', {message: req.flash('message')});
+	});
 
-router.post('/register', passport.authenticate('register', {
-	successRedirect: '/home',
-	failureRedirect: '/register',
-	failureFlash : true
-}));
+	router.get('/home', isAuthenticated, function(req,res, next) {
+		res.render('home', {user: req.user});
+	});
 
-module.exports = router;
+	router.post('/register', passport.authenticate('register', {
+		successRedirect: '/home',
+		failureRedirect: '/register',
+		failureFlash : true
+	}));
+
+	router.get('/signout', function(req, res) {
+		req.logout();
+		res.redirect('/');
+	})
+
+	// route for facebook authentication and login
+	// different scopes while logging in
+	router.get('/login/facebook', 
+	  passport.authenticate('facebook', { scope : 'email' }
+	));
+	 
+	// handle the callback after facebook has authenticated the user
+	router.get('/login/facebook/callback',
+	  passport.authenticate('facebook', {
+	    successRedirect : '/home',
+	    failureRedirect : '/'
+	  })
+	);
+	return router;
+};
 // module.exports = function(passport){
  
 //   /* GET login page. */
