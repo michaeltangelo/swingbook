@@ -3,6 +3,8 @@
 <h2>Overview</h2>
 >"Should I go swing dancing today?" This age old question is asked dozens, if not hundreds, if not *thousands* of times a day by swing dancers around the world. Although the answer should always be, "yes," sometimes it helps to know who else will be going out that night. SwingBook is a site that allows users to view swing events all around the city (NYC only for now) and indicate whether they intend to attend the event. The core feature of SwingBook is the ability to view other attending dancers and connect with them (before or after) the event. Additionally, users will have the option to include a brief, personal recap/note about which swanky new move they learned at the event itself. Users will have a brief bio describing their level of experience with swing dancing, what they want to get better at, and their 'favorite move', which will be visible to all. Additional features can be added.
 
+rco87Zhe
+
 <h2>Data Model</h2>
 
   First draft schema:
