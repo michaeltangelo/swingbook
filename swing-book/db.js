@@ -181,5 +181,5 @@ mongoose.model('Event', Event);
 mongoose.model('Post', Post);
 mongoose.model('Level', Level);
 
-mongoose.connect('mongodb://localhost/swingbook');
-// mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
+// mongoose.connect('mongodb://localhost/swingbook');
+mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
