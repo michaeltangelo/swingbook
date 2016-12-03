@@ -37,6 +37,8 @@ var Event = new mongoose.Schema( {
     name: String,
     location: String,
     imageUrl: String,
+    recurring: String,
+    description: String,
 
     // The maybe attending users
     maybes: [{type: mongoose.Schema.ObjectId, ref: 'maybes'}],
