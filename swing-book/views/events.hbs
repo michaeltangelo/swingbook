@@ -1,10 +1,13 @@
 <h1>Events List</h1>
-
+{{events}}
 <!--list of all image-posts-->
 {{#each events}}
 <h2>{{date}} - {{name}}</h2>
-<p>{{location}}</p>
-<p>{{start}} - {{end}}</p>
+<p>Time: {{start}} - {{end}}</p>
+<p>Address: {{location}}</p>
+<p>Description: {{description}}</p>
 <img src={{imageUrl}}>
 <br><br>
 {{/each}}
+
+<a href="/events/create">Create a new event</a>
