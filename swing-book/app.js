@@ -17,8 +17,10 @@ var db = require('./db.js');
 var User = mongoose.model('User');
 var fbConfig = require('./public/javascripts/fb.js');
 
+// Routes Initialization
 var index = require('./routes/index')(passport);
 var users = require('./routes/users');
+var events = require('./routes/events');
 
 var app = express();	
 
@@ -45,7 +47,8 @@ app.use(passport.session());
 app.use(flash());
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/user', users);
+app.use('/events', events);
 
 // referenced from:
 // https://code.tutsplus.com/tutorials/authenticating-nodejs-applications-with-passport--cms-21619
@@ -54,6 +57,7 @@ passport.use('login', new LocalStrategy({
     passReqToCallback : true
   },
   function(req, username, password, done) { 
+    username = username.toLowerCase();
     // check in mongo if a user with username exists or not
     User.findOne({ 'username' :  username }, 
       function(err, user) {
@@ -66,15 +70,21 @@ passport.use('login', new LocalStrategy({
           return done(null, false, 
                 req.flash('message', 'User Not found.'));                 
         }
-        // User exists but wrong password, log the error 
-        if (!bCrypt.compareSync(password, user.password)){
-          console.log('Invalid Password');
-          return done(null, false, 
-              req.flash('message', 'Invalid Password'));
+        if (user.password) {
+          // User exists but wrong password, log the error 
+          if (!bCrypt.compareSync(password, user.password)){
+            console.log('Invalid Password');
+            return done(null, false, 
+                req.flash('message', 'Invalid Password'));
+          }
+          // User and password both match, return user from 
+          // done method which will be treated like success
+          return done(null, user);
         }
-        // User and password both match, return user from 
-        // done method which will be treated like success
-        return done(null, user);
+        else {
+          return done(null, false,
+                req.flash('message', 'Please login using Facebook.'));
+        }
       }
     );
 }));
@@ -97,6 +107,7 @@ passport.use('register', new LocalStrategy({
   function(req, username, password, done) {
   	console.log("Inside the register passport strategy");
     findOrCreateUser = function(){
+      username = username.toLowerCase();
       // find a user in Mongo with provided username
       User.findOne({'username':username},function(err, user) {
       	console.log("Inside FindorcreateUser in app.js | username: " +username);
@@ -176,7 +187,7 @@ passport.use('facebook', new FacebookStrategy({
             newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user                    
             newUser.fb.firstName  = profile.name.givenName;
             newUser.fb.lastName = profile.name.familyName; // look at the passport user profile to see how names are returned
-            newUser.username = newUser.fb.firstName + " " +newUser.fb.lastName;
+            newUser.username = (newUser.fb.firstName + "" +newUser.fb.lastName).toLowerCase();
             console.log("4Set all newUser properties. newUser is now: " + newUser);
             console.log("profile: " + JSON.stringify(profile));
             // newUser.fb.email = profile.emails[0].value; // facebook can return multiple emails so we'll take the first

@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var Event = mongoose.model('Event');
+var Events = mongoose.model('Event');
 var passport = require('passport');
+// var authenticated = require('../public/javascripts/authenticated.js');
 
 
 // As with any middleware it is quintessential to call next()

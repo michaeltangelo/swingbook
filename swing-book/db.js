@@ -36,6 +36,7 @@ var Event = new mongoose.Schema( {
     end: String,
     name: String,
     location: String,
+    imageUrl: String,
 
     // The maybe attending users
     maybes: [{type: mongoose.Schema.ObjectId, ref: 'maybes'}],
@@ -178,5 +179,5 @@ mongoose.model('Event', Event);
 mongoose.model('Post', Post);
 mongoose.model('Level', Level);
 
-// mongoose.connect('mongodb://localhost/swingbook');
-mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
+mongoose.connect('mongodb://localhost/swingbook');
+// mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
