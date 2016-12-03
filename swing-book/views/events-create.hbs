@@ -1,0 +1,48 @@
+<!--
+<script type="text/javascript" language="javascript">
+
+	function validateForm() {
+		console.log("called");
+
+		var check = ["name", "date", "start", "end", "location"];
+
+		for (var i = 0; i < check.length; i++) {
+			var val = document.forms["createEvent"][check].value;
+			if (val == "") {
+				var errEle = document.getElementById('errMsg');
+				var errMsg = check + ' field is required.';
+				errEle.innerHTML = errMsg;
+				return false;
+			}
+		}
+		return false;
+	}
+
+</script>
+-->
+
+<h1>Create new Event</h1>
+
+<form name="createEvent" method="POST" action="/events/create")>
+	Event Name: <input type="text" name="name" id="name" required><br>
+	Date: <input type="date" name="date" id="date" required><br>
+	Start Time: <input type="time" name="start" id="start" required><br>
+	End Time: <input type="time" name="end" id="end" required><br>
+	<input type="radio" name="recurring" value="never" checked>One Time</br>
+	<input type="radio" name="recurring" value="weekly">Weekly</br>
+	<input type="radio" name="recurring" value="monthly">Monthly</br>
+	Location: <input type="text" name="location" id="location" required><br>
+	Image Url: <input type="url" name="imageUrl" id="imageUrl"><br>
+	Description: <textarea rows="4" cols="50" name="description"></textarea><br>
+	<input type="submit" id="submit" value="Create">
+	<p id="errMsg" style="{color: red}"><p>
+</form>
+
+<!--list of all image-posts-->
+{{#each events}}
+<h2>{{date}} - {{name}}</h2>
+<p>{{location}}</p>
+<p>{{start}} - {{end}}</p>
+<img src={{imageUrl}}>
+<br><br>
+{{/each}}
