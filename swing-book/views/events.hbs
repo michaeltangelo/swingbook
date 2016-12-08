@@ -1,13 +1,19 @@
+<header>Logged in as: {{user.username}} | Sign out</header>
+
 <h1>Events List</h1>
 {{events}}
 <!--list of all image-posts-->
 {{#each events}}
-<h2>{{date}} - {{name}}</h2>
+<br><br>
+<a class="eventName" href=/events/{{slug}}>{{month}}/{{day}} | {{name}}</a><br>
 <p>Time: {{start}} - {{end}}</p>
 <p>Address: {{location}}</p>
 <p>Description: {{description}}</p>
 <img src={{imageUrl}}>
+<br>
+<button data-slug={{slug}} id="joinEvent" type="button" class="joinEvent">Join Event</button>
 <br><br>
 {{/each}}
 
 <a href="/events/create">Create a new event</a>
+<script src="/javascripts/event-join.js"></script>

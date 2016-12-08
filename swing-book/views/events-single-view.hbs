@@ -1,0 +1,45 @@
+<h1>Single Event Viewer</h1>
+{{event}}
+<h2>{{event.month}}/{{event.day}} | {{event.name}}</h2>
+<p>Time: {{event.start}} - {{event.end}}</p>
+<p>Address: {{event.location}}</p>
+<p>Description: {{event.description}}</p>
+<img src={{event.imageUrl}}>
+<br>
+<button data-slug={{event.slug}} id="joinEvent" type="button" class="joinEvent">Join Event</button>
+<br><br>
+
+<a href="/events">Back to Events List</a>
+<script src="/javascripts/event-join.js"></script>
+
+<!--
+<h2>{{post.title}}</h2>
+<div class="error">{{err}}</div><br>
+<form method="post" action="/remove">
+{{#each post.images}}
+	<div class="image">
+		<input type="checkbox" name="remove" value={{_id}}>{{caption}}<br><br>
+		<img src={{url}}><br><br>
+	</div>
+{{/each}}
+	<br><input type="submit" value="Delete Checked">
+	<input type="hidden" name="slug" value = {{post.slug}}>
+</form>
+<br><br>
+
+<div class="container">
+	<form method="post" action="/add">
+		Image URL: <input type="text" placeholder="URL" name="url">, Caption: <input type="text" placeholder="Caption" name="caption"><br>
+		<br><input type="submit" value="Add another image">
+		<input type="hidden" name="slug" value={{post.slug}}>
+	</form>
+</div>
+
+<div class="container">
+	<br>
+	<form method="POST" action="/deletepost">
+		<input ID="delete" type="submit" value="Delete Entire Post">
+		<input type="hidden" name="id" value={{post.id}}>
+	</form>
+</div>
+<br><br><a href="/image-posts">Home</a> -->

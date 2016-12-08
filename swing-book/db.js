@@ -39,6 +39,9 @@ var Event = new mongoose.Schema( {
     imageUrl: String,
     recurring: String,
     description: String,
+    year: String,
+    month: String,
+    day: String,
 
     // The maybe attending users
     maybes: [{type: mongoose.Schema.ObjectId, ref: 'maybes'}],
@@ -173,7 +176,7 @@ var Bio = new mongoose.Schema({
 // });
 
 // Implement slugs for a certain schema
-// ImagePost.plugin(URLSlugs('title'));
+Event.plugin(URLSlugs('name month day'));
 
 mongoose.model('User', User);
 mongoose.model('Move', Move);
@@ -181,5 +184,5 @@ mongoose.model('Event', Event);
 mongoose.model('Post', Post);
 mongoose.model('Level', Level);
 
-// mongoose.connect('mongodb://localhost/swingbook');
-mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
+mongoose.connect('mongodb://localhost/swingbook');
+// mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
