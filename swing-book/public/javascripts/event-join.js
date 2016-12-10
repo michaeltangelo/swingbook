@@ -67,8 +67,10 @@ function f() {
 					else if (res[0] === 'added') {
 						// incremenet num attendees on the event
 						var numAttendingEle = document.getElementById('numAttending');
-						var numAttending = parseInt(numAttendingEle.innerHTML);
-						numAttendingEle.innerHTML = (numAttending+1)+"";
+						if (numAttendingEle) {
+							var numAttending = parseInt(numAttendingEle.innerHTML);
+							numAttendingEle.innerHTML = (numAttending+1)+"";
+						}
 
 						// Update The Join button to correct string
 						join.innerHTML = "Unattend Event";
@@ -86,8 +88,10 @@ function f() {
 					else if (res[0] === 'removed') {
 						// Decrement num attendees on the event
 						var numAttendingEle = document.getElementById('numAttending');
-						var numAttending = parseInt(numAttendingEle.innerHTML);
-						numAttendingEle.innerHTML = (numAttending-1)+"";
+						if (numAttendingEle) {
+							var numAttending = parseInt(numAttendingEle.innerHTML);
+							numAttendingEle.innerHTML = (numAttending-1)+"";
+						}
 
 						// Update The Join button to correct string
 						join.innerHTML = "Join Event";

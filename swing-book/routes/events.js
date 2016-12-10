@@ -14,8 +14,17 @@ var isAuthenticated = function (req, res, next) {
   res.redirect('/');
 }
 
+// Get default /events page
+// Show only the next week of events
 router.get('/', function(req, res, next) {
-	Event.find({}).sort('-date').exec(function(err, events) {
+	// Event.find({}).sort('-date').exec(function(err, events) {
+	// 	res.render('events', {events: events, user: req.user});
+	// });
+
+ // date: {$gt: now, $lt: now + 7 * 24 * 60 * 60 * 1000}
+	var now = new Date();
+	Event.find({
+	}).sort('-date').exec(function(err, events) {
 		res.render('events', {events: events, user: req.user});
 	});
 });
@@ -99,6 +108,7 @@ router.post('/:slug/remove', function(req, res, next) {
 		event.save(function(err) {
 			if (!err) {
 				User.findById(removedId, function(err, user) {
+					console.log(user);
 					if (!err) res.send('removed' + ',' + user.firstName + ',' + user.lastName);
 					else console.log("Passing back the username of the user removed from event list");
 				});
@@ -157,11 +167,13 @@ router.post('/:slug/join', function(req, res, next) {
 
 router.post('/create', isAuthenticated, function(req, res, next) {
 	console.log(req.body);
+	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	var newEvent = new Event();
-	var date = new Date(req.body.date);
+	var date = new Date(req.body.date+'T00:00:00');
 	newEvent.date = date;
-	newEvent.day = date.getDate();
-	newEvent.month = date.getMonth()+1;
+	newEvent.day = date.getUTCDate();
+	newEvent.dayName = days[date.getUTCDay()];
+	newEvent.month = date.getUTCMonth()+1;
 	newEvent.year = date.getFullYear();
 	newEvent.start = req.body.start;
 	newEvent.end = req.body.end;

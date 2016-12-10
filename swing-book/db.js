@@ -42,6 +42,7 @@ var Event = new mongoose.Schema( {
     year: String,
     month: String,
     day: String,
+    dayName: String,
 
     // The maybe attending users
     maybes: [{type: mongoose.Schema.ObjectId, ref: 'maybes'}],
