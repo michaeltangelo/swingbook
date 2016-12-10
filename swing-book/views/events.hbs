@@ -5,7 +5,7 @@
 <!--list of all image-posts-->
 {{#each events}}
 <br><br>
-<a class="eventName" href=/events/{{slug}}>{{month}}/{{day}} | {{name}}</a><br>
+<a class="eventName" href=/events/{{slug}}>{{month}}/{{day}} | {{name}} | <span id="numAttending">{{attending.length}}</span> attending</a><br>
 <p>Time: {{start}} - {{end}}</p>
 <p>Address: {{location}}</p>
 <p>Description: {{description}}</p>

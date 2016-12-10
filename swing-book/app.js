@@ -11,6 +11,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var expressSession = require('express-session');
 var flash = require('connect-flash');
+var async = require('async');
 
 // Non auto express-generator requires
 var db = require('./db.js');
@@ -105,7 +106,7 @@ passport.use('register', new LocalStrategy({
     passReqToCallback : true
   },
   function(req, username, password, done) {
-  	console.log("Inside the register passport strategy");
+  	console.log("Inside the register passport strategy. req body: " + JSON.stringify(req.body));
     findOrCreateUser = function(){
       username = username.toLowerCase();
       // find a user in Mongo with provided username
@@ -128,6 +129,12 @@ passport.use('register', new LocalStrategy({
           var newUser = new User();
           // set the user's local credentials
           newUser.username = username;
+          // Function from http://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+          function upperCaseFirst(str){
+            return str.charAt(0).toUpperCase() + str.substring(1);
+          }
+          newUser.firstName = upperCaseFirst(req.body.firstName);
+          newUser.lastName = upperCaseFirst(req.body.lastName);
           newUser.password = bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
           newUser.joined = new Date();
  
@@ -187,6 +194,8 @@ passport.use('facebook', new FacebookStrategy({
             newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user                    
             newUser.fb.firstName  = profile.name.givenName;
             newUser.fb.lastName = profile.name.familyName; // look at the passport user profile to see how names are returned
+            newUser.firstName = profile.name.givenName;
+            newUser.lastName = profile.name.familyName;
             newUser.username = (newUser.fb.firstName + "" +newUser.fb.lastName).toLowerCase();
             console.log("4Set all newUser properties. newUser is now: " + newUser);
             console.log("profile: " + JSON.stringify(profile));

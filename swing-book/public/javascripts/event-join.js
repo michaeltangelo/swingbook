@@ -60,14 +60,49 @@ function f() {
 			req.onreadystatechange = function() {
 				// console.log(req.readyState);
 				if(req.readyState == 4 && req.status == 200) {
-					if (req.responseText === "failed") {
+					var res = req.responseText.split(",");
+					if (res[0] === "failed") {
 						window.location.href = '/';
 					}
-					else if (req.responseText === 'added') {
+					else if (res[0] === 'added') {
+						// incremenet num attendees on the event
+						var numAttendingEle = document.getElementById('numAttending');
+						var numAttending = parseInt(numAttendingEle.innerHTML);
+						numAttendingEle.innerHTML = (numAttending+1)+"";
+
+						// Update The Join button to correct string
 						join.innerHTML = "Unattend Event";
+
+						// Change the list to display proper attendees
+						var attendingList = document.getElementById('attendingUsers');
+						if (attendingList) {
+							var li = document.createElement('li');
+							var firstName = res[1];
+							var lastName = res[2];
+							li.appendChild(document.createTextNode(firstName + ' ' + lastName));
+							attendingList.appendChild(li);
+						}
 					}
-					else if (req.responseText === 'removed') {
+					else if (res[0] === 'removed') {
+						// Decrement num attendees on the event
+						var numAttendingEle = document.getElementById('numAttending');
+						var numAttending = parseInt(numAttendingEle.innerHTML);
+						numAttendingEle.innerHTML = (numAttending-1)+"";
+
+						// Update The Join button to correct string
 						join.innerHTML = "Join Event";
+
+						// Change the list to display proper attendees
+						var attendingList = document.getElementById('attendingUsers');
+						if (attendingList) {
+							var items = attendingList.getElementsByTagName('li');
+							for (var i = 0; i < items.length; i++) {
+								var nameCheck = res[1] + ' ' + res[2];
+								if (items[i].innerHTML === nameCheck) {
+									items[i].remove();
+								}
+							}
+						}
 					}
 					else {
 						// console.log(req.responseText);

@@ -60,10 +60,8 @@ var Event = new mongoose.Schema( {
 
 // create a schema
 var User = new mongoose.Schema({
-	name: {
-		first: String,
-		last: {type: String, trim: true}
-	},
+    firstName: String,
+    lastName: { type: String, trim: true},
 	username: { type: String, unique: true },
 	password: { type: String},
 	joined: Date,
@@ -184,5 +182,5 @@ mongoose.model('Event', Event);
 mongoose.model('Post', Post);
 mongoose.model('Level', Level);
 
-// mongoose.connect('mongodb://localhost/swingbook');
-mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')
+mongoose.connect('mongodb://localhost/swingbook');
+// mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')

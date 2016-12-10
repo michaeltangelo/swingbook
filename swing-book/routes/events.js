@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Event = mongoose.model('Event');
 var passport = require('passport');
+var async = require('async');
 
 // As with any middleware it is quintessential to call next()
 // if the user is authenticated
@@ -26,12 +27,35 @@ router.get('/create', isAuthenticated, function(req, res, next) {
 router.get('/:slug', function(req, res, next) {
 	var requestSlug = req.params.slug;
 	Event.find(function(err, events, count) {
+		var event;
 		for (var key in events) {
 			if (events[key].slug === requestSlug) {
-				var event = events[key];
-				res.render('events-single-view', {event: event});
+				event = events[key];
+				break;
 			}
 		}
+		// got the event. loop through the event's attending list
+		var calls = [];
+		event.attending.forEach(function(userId) {
+			calls.push(function(cb) {
+				User.findById(userId, function(err, user) {
+					if (err) return cb(err);
+					cb(null, user);
+				});
+			});
+		});
+
+		async.parallel(calls, function(err, users) {
+			if (err) console.log("Error in finding user by id.");
+			else {
+				var userMap = {};
+				console.log("FINISHED ALL CALLS");
+				for (var id in users) {
+					userMap[id] = users[id];
+				}
+				res.render('events-single-view', {event: event, userMap: userMap});
+			}
+		});
 	});
 });
 
@@ -71,9 +95,14 @@ router.post('/:slug/remove', function(req, res, next) {
 				break;
 			}
 		}
-		event.attending.splice(indexToRemove, 1);
+		var removedId = event.attending.splice(indexToRemove, 1)[0];
 		event.save(function(err) {
-			if(!err) res.send('removed');
+			if (!err) {
+				User.findById(removedId, function(err, user) {
+					if (!err) res.send('removed' + ',' + user.firstName + ',' + user.lastName);
+					else console.log("Passing back the username of the user removed from event list");
+				});
+			}
 			else res.send('error in removing user');
 		})
 	});
@@ -102,7 +131,10 @@ router.post('/:slug/join', function(req, res, next) {
 				event.attending.push(req.user._id);
 				event.save(function(err) {
 					if (!err) {
-						res.send('added');
+						User.findById(req.user._id, function(err, user) {
+							if (!err) res.send('added' + ',' + user.firstName + ',' + user.lastName);
+							else console.log("Passing back the username of the user added to event list");
+						});
 					}
 					else {
 						res.send('error in saving');
