@@ -17,7 +17,12 @@ var isAuthenticated = function (req, res, next) {
 module.exports = function(passport) {
 	/* GET home page. */
 	router.get('/', function(req, res, next) {
-		res.render('index', {message: req.flash('message')});
+		if (!req.isAuthenticated()) {
+			res.render('index', {message: req.flash('message')});
+		}
+		else {
+			res.redirect('/home');
+		}
 		// var newUser = new User( {
 		// 	name: {first: "Joe", last: "Fursoza"},
 		// 	username: "jversoza",
@@ -47,7 +52,7 @@ module.exports = function(passport) {
 	});
 
 	router.get('/home', isAuthenticated, function(req,res, next) {
-		res.render('home', {user: req.user});
+		res.render('home', {user: req.user, loggedIn: true});
 	});
 
 	router.post('/register', passport.authenticate('register', {
@@ -65,7 +70,7 @@ module.exports = function(passport) {
 	// route for facebook authentication and login
 	// different scopes while logging in
 	router.get('/login/facebook', 
-	  passport.authenticate('facebook', { scope : 'email' }
+	  passport.authenticate('facebook', { scope : 'email'}
 	));
 	 
 	// handle the callback after facebook has authenticated the user
@@ -75,6 +80,10 @@ module.exports = function(passport) {
 	    failureRedirect : '/'
 	  })
 	);
+
+	router.get('/test', function(req, res) {
+		res.render('test');
+	});
 	return router;
 };
 // module.exports = function(passport){

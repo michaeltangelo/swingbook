@@ -43,6 +43,7 @@ var Event = new mongoose.Schema( {
     month: String,
     day: String,
     dayName: String,
+    monthName: String,
 
     // The maybe attending users
     maybes: [{type: mongoose.Schema.ObjectId, ref: 'maybes'}],
@@ -68,13 +69,13 @@ var User = new mongoose.Schema({
 	joined: Date,
 	lastUpdated: Date,
 	friends: [mongoose.Schema.ObjectId],
-	level: Level,
-	eventsList: [Event],
+	// level: Level,
+	// eventsList: [Event],
 	bio: {
 		about: String,
 		favoriteMove: Move,
-		favoriteEvent: Event,
-		pastEvents: [Event],
+		// favoriteEvent: Event,
+		// pastEvents: [Event],
 	},
 	fb: {
 		id: String,

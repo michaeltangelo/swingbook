@@ -1,24 +1,34 @@
-<!-- <h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
-<h2>Below is the User object</h2>
-<p>{{User}}</p>
-<h2>Below is an Event object</h2>
-<p>{{Event}}</p> -->
-<h1>LOGIN</h1>
-<form method="POST" action="/login">
-	Username: <input type="text" name="username" placeholder="username" required><br>
-	Password: <input type="password" name="password" placeholder="password" required><br>
-	<input type="submit" value="Login">
-</form>
-<a href="/register">Create a new account</a>
-<p style="color:red;">{{message}}</p>
+<link rel="stylesheet" href="/stylesheets/login.css">
+<div class="container">
+    <div class="row">
+    	<div class="col-md-4 col-md-offset-4">
+    		<div class="panel panel-default">
+			  	<div class="panel-heading">
+			    	<h3 class="panel-title">Login</h3>
+			 	</div>
+			  	<div class="panel-body">
+			    	<form accept-charset="UTF-8" role="form" method="POST" action="/login">
+                    <fieldset>
+			    	  	<div class="form-group">
+			    		    <input class="form-control" placeholder="Username" name="username" type="text" required>
+			    		</div>
+			    		<div class="form-group">
+			    			<input class="form-control" placeholder="Password" name="password" type="password" value="" required>
+			    		</div>
+			    		<div class="form-group">
+			    			<p id="errMsg">{{message}}</p>
+			    		</div>
+			    		<input id="loginBtn" class="btn btn-lg btn-success btn-block" type="submit" value="Login">
+			    		<a href="/register"><input class="btn btn-lg btn-inverse btn-block" value="Register"></a>
+			    	</fieldset>
+			      	</form>
+                      <hr/>
+                    <center><h4>OR</h4></center>
+                    <a href="/login/facebook"><input class="btn btn-lg btn-facebook btn-block" type="submit" value="Login via facebook"></a>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
 
-<a href="/login/facebook">Login With Facebook</a>
-
-<br><br>
-<form id="testForm" method="POST" action="">
-	Irrelevant Form Data for Milestone#2: <input id="testText" type="text" placeholder="Enter au4toijzdfk stuff here">
-	<input id="submit" type="submit" value="Submit">
-</form>
-<div id="testData"></div>
 <script src="javascripts/script.js"></script>

@@ -1,8 +1,10 @@
 <script type="text/javascript">if (window.location.hash == '#_=_')window.location.hash = '';</script>
 
-<h1>Home Page</h1>
-<h3>Welcome, {{user.username}}</h3>
-<p>{{user}}</p>
+<div class="container-fluid">
+	<h1 class="text-centered">Home Page</h1>
+	<h3 class="text-centered">Welcome, {{user.username}}</h3>
+	<p class="text-centered">{{user}}</p>
+</div>
 
 <a href="/events">View All Events</a><br>
 
@@ -11,3 +13,5 @@
 <form action="/signout">
 	<input type="submit" value="Log Out">
 </form>
+
+<button type="button" class="btn btn-primary btn-lg">Large button</button>

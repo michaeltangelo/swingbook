@@ -1,3 +1,11 @@
+<link rel="stylesheet" href="/stylesheets/events.css">
+<script>
+	function f() {
+		
+	}
+</script>
+
+
 <header>Logged in as: {{user.username}} | Sign out</header>
 
 <h1>Events List</h1>
@@ -17,3 +25,34 @@
 
 <a href="/events/create">Create a new event</a>
 <script src="/javascripts/event-join.js"></script>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-8 events-main">
+			{{#each events}}
+			<div class="events-single">
+				<div class="events-single-bg" style="background-image: url(http://wallpapercave.com/wp/17XP3In.jpg);">
+					<div class="events-single-header" onclick=location.href=/events/{{slug}};>
+						<a class="eventName" href=/events/{{slug}}><h2 class="events-title">{{name}}</h2></a>
+						<div class="row">
+							<div class="col-sm-4">
+								<p>{{start}} - {{end}}</p>
+							</div>
+							<div class="col-sm-4" id="events-single-header-sub-left">
+								<p>{{dayName}} | January {{day}}, {{year}}</p>
+							</div> 
+							<div class="col-sm-4" id="events-single-header-sub-right">
+								<p>{{location}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="events-single-main">
+					<p>{{description}}</p>
+				</div>
+			</div>
+			<hr/>
+			{{/each}}
+		</div>
+	</div>
+</div>

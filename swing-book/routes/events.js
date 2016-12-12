@@ -22,15 +22,19 @@ router.get('/', function(req, res, next) {
 	// });
 
  // date: {$gt: now, $lt: now + 7 * 24 * 60 * 60 * 1000}
+ 	var loggedIn = false;
+ 	if (req.isAuthenticated()) {
+ 		loggedIn = true;
+ 	}
 	var now = new Date();
 	Event.find({
 	}).sort('-date').exec(function(err, events) {
-		res.render('events', {events: events, user: req.user});
+		res.render('events', {events: events, user: req.user, loggedIn: loggedIn});
 	});
 });
 
 router.get('/create', isAuthenticated, function(req, res, next) {
-	res.render('events-create', {user: req.user});
+	res.render('events-create', {user: req.user, loggedIn: true});
 });
 
 router.get('/:slug', function(req, res, next) {
@@ -62,7 +66,7 @@ router.get('/:slug', function(req, res, next) {
 				for (var id in users) {
 					userMap[id] = users[id];
 				}
-				res.render('events-single-view', {event: event, userMap: userMap});
+				res.render('events-single-view', {event: event, userMap: userMap, loggedIn: true});
 			}
 		});
 	});
@@ -79,7 +83,9 @@ router.post('/:slug/check', function(req, res, next) {
 	var requestSlug = req.params.slug;
 
 	Event.findOne({slug:requestSlug}, function(err, event) {
+		// console.log("Looping through all events");
 		event.attending.forEach(function(ele) {
+			// console.log("Looping through: " + JSON.stringify(ele));
 			if (JSON.stringify(ele) === JSON.stringify(req.user._id)) {
 				res.send('attending');
 				return;
@@ -109,7 +115,7 @@ router.post('/:slug/remove', function(req, res, next) {
 			if (!err) {
 				User.findById(removedId, function(err, user) {
 					console.log(user);
-					if (!err) res.send('removed' + ',' + user.firstName + ',' + user.lastName);
+					if (!err && user) res.send('removed' + ',' + user.firstName + ',' + user.lastName);
 					else console.log("Passing back the username of the user removed from event list");
 				});
 			}
@@ -168,12 +174,14 @@ router.post('/:slug/join', function(req, res, next) {
 router.post('/create', isAuthenticated, function(req, res, next) {
 	console.log(req.body);
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 	var newEvent = new Event();
 	var date = new Date(req.body.date+'T00:00:00');
 	newEvent.date = date;
 	newEvent.day = date.getUTCDate();
 	newEvent.dayName = days[date.getUTCDay()];
 	newEvent.month = date.getUTCMonth()+1;
+	newEvent.monthName = months[date.getUTCMonth()+1];
 	newEvent.year = date.getFullYear();
 	newEvent.start = req.body.start;
 	newEvent.end = req.body.end;
