@@ -11,8 +11,14 @@
 //   'callbackUrl' : 'http://i6.cims.nyu.edu:17466/login/facebook/callback'
 // }
 
+// module.exports = {
+//   'appID' : '351367721890926',
+//   'appSecret' : 'd9b2089b790a37af7d75882d655cc650',
+//   'callbackUrl' : 'http://swing-book.herokuapp.com/login/facebook/callback'
+// }
+
 module.exports = {
   'appID' : '351367721890926',
   'appSecret' : 'd9b2089b790a37af7d75882d655cc650',
-  'callbackUrl' : 'http://swing-book.herokuapp.com/login/facebook/callback'
+  'callbackUrl' : 'http://www.swingbook.io/login/facebook/callback'
 }
