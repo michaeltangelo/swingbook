@@ -52,7 +52,8 @@ module.exports = function(passport) {
 	});
 
 	router.get('/home', isAuthenticated, function(req,res, next) {
-		res.render('home', {user: req.user, loggedIn: true});
+		res.redirect('/events');
+		// res.render('home', {user: req.user, loggedIn: true});
 	});
 
 	router.post('/register', passport.authenticate('register', {

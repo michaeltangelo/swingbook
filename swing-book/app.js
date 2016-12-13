@@ -22,6 +22,7 @@ var fbConfig = require('./public/javascripts/fb.js');
 var index = require('./routes/index')(passport);
 var users = require('./routes/users');
 var events = require('./routes/events');
+var dj = require('./routes/dj');
 
 var app = express();	
 
@@ -50,6 +51,7 @@ app.use(flash());
 app.use('/', index);
 app.use('/user', users);
 app.use('/events', events);
+app.use('/dj', dj);
 
 // referenced from:
 // https://code.tutsplus.com/tutorials/authenticating-nodejs-applications-with-passport--cms-21619

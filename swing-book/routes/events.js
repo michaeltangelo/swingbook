@@ -83,14 +83,25 @@ router.post('/:slug/check', function(req, res, next) {
 	var requestSlug = req.params.slug;
 
 	Event.findOne({slug:requestSlug}, function(err, event) {
+		if (err) {
+			console.log("Could not find event with slug: " + requestSlug);
+		}
 		// console.log("Looping through all events");
+		var found = false;
 		event.attending.forEach(function(ele) {
-			// console.log("Looping through: " + JSON.stringify(ele));
+			console.log("Looping through: " + JSON.stringify(ele));
 			if (JSON.stringify(ele) === JSON.stringify(req.user._id)) {
-				res.send('attending');
-				return;
+				console.log("Found a match: " + JSON.stringify(ele));
+				found = true;
 			}
 		});
+		if (found) {
+			res.send('attending');
+		}
+		else {
+			res.send('FAILURERAWERAWER');
+		}
+		return;
 	});
 });
 
@@ -102,10 +113,15 @@ router.post('/:slug/remove', function(req, res, next) {
 
 	var requestSlug = req.params.slug;
 
+	// console.log("Attempting to find event with slug: " + requestSlug);
 	Event.findOne({slug:requestSlug}, function(err, event) {
+		// console.log("Found an event with attending list: " + event.attending);
 		var indexToRemove = 0;
-		for (var i = 0; i < event.attending; i++) {
+		for (var i = 0; i < event.attending.length; i++) {
+			// console.log("event.attending[i]: " + event.attending[i]);
+			// console.log("JSON.stringify(req.user._id): " + JSON.stringify(req.user._id));
 			if (JSON.stringify(event.attending[i]) === JSON.stringify(req.user._id)) {
+				// console.log("Found a match in event with user: " + req.user +"| index: " + i);
 				indexToRemove = i;
 				break;
 			}
@@ -115,7 +131,10 @@ router.post('/:slug/remove', function(req, res, next) {
 			if (!err) {
 				User.findById(removedId, function(err, user) {
 					console.log(user);
-					if (!err && user) res.send('removed' + ',' + user.firstName + ',' + user.lastName);
+					if (!err && user) {
+						console.log("removing user.firstName: " + user.firstName);
+						res.send('removed' + ',' + user.firstName + ',' + user.lastName);
+					}
 					else console.log("Passing back the username of the user removed from event list");
 				});
 			}
@@ -125,7 +144,7 @@ router.post('/:slug/remove', function(req, res, next) {
 });
 
 router.post('/:slug/join', function(req, res, next) {
-	// console.log("Hit the join post for slug: " + req.params.slug)
+	console.log("Hit the join post for slug: " + req.params.slug)
 	// if user not logged in, send failed to clientside to redirect to login page
 	if (!req.isAuthenticated()) {
 		res.send('failed');
@@ -153,16 +172,19 @@ router.post('/:slug/join', function(req, res, next) {
 						});
 					}
 					else {
+						console.log("Could not update event");
 						res.send('error in saving');
 					}
 				});
 			}
 			else {
+				console.log("WE HERE1");
 				res.send('Already exists');
 				return;
 			}
 		}
 		else {
+			console.log("Error in database: " + err);
 			res.send('error in database: ' + err);
 			return;
 		}
@@ -181,10 +203,20 @@ router.post('/create', isAuthenticated, function(req, res, next) {
 	newEvent.day = date.getUTCDate();
 	newEvent.dayName = days[date.getUTCDay()];
 	newEvent.month = date.getUTCMonth()+1;
-	newEvent.monthName = months[date.getUTCMonth()+1];
+	newEvent.monthName = months[date.getUTCMonth()];
+	console.log("Saving month name as: " + months[date.getUTCMonth()]);
 	newEvent.year = date.getFullYear();
-	newEvent.start = req.body.start;
-	newEvent.end = req.body.end;
+
+	function convert24to12(time) {
+		var split = time.split(":");
+		var hours = split[0];
+		var hours12 = parseInt(hours) > 12 ? (parseInt(hours) - 12) : hours;
+		var minutes = split[1];
+		var timeOfDay = parseInt(hours) < 12 ? "AM" : "PM";
+		return hours12+":"+minutes+" "+timeOfDay;
+	}
+	newEvent.start = convert24to12(req.body.start);
+	newEvent.end = convert24to12(req.body.end);
 	newEvent.name = req.body.name;
 	var recurring = req.body.recurring;
 	newEvent.location = req.body.location;

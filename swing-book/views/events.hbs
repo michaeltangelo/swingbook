@@ -1,52 +1,38 @@
 <link rel="stylesheet" href="/stylesheets/events.css">
 <script>
 	function f() {
-		
+
 	}
 </script>
-
-
-<header>Logged in as: {{user.username}} | Sign out</header>
-
-<h1>Events List</h1>
-{{events}}
-<!--list of all image-posts-->
-{{#each events}}
-<br><br>
-<a class="eventName" href=/events/{{slug}}>{{month}}/{{day}} | {{name}}</a><br>
-<p>Time: {{start}} - {{end}}</p>
-<p>Address: {{location}}</p>
-<p>Description: {{description}}</p>
-<img src={{imageUrl}}>
-<br>
-<button data-slug={{slug}} id="joinEvent" type="button" class="joinEvent">Join Event</button>
-<br><br>
-{{/each}}
-
-<a href="/events/create">Create a new event</a>
-<script src="/javascripts/event-join.js"></script>
+<!-- <header>Logged in as: {{user.username}} | Sign out</header> -->
 
 <div class="container">
 	<div class="row">
 		<div class="col-sm-8 events-main">
+			<div class="row">
+				<div style="margin-left: 2%; margin-bottom: -6%"><h2>Events</h2></div>
+				<div style="position: relative; text-align: right; margin-right: 2%"><a href="/events/create">Create a new event</a></div>
+			</div>
+			<hr/>
 			{{#each events}}
 			<div class="events-single">
-				<div class="events-single-bg" style="background-image: url(http://wallpapercave.com/wp/17XP3In.jpg);">
+				<div class="events-single-bg" style=background-image:url({{imageUrl}});>
 					<div class="events-single-header" onclick=location.href=/events/{{slug}};>
 						<a class="eventName" href=/events/{{slug}}><h2 class="events-title">{{name}}</h2></a>
 						<div class="row">
 							<div class="col-sm-4">
-								<p>{{start}} - {{end}}</p>
+								<p style="font-size: 90%">{{start}} - {{end}}</p>
 							</div>
 							<div class="col-sm-4" id="events-single-header-sub-left">
-								<p>{{dayName}} | January {{day}}, {{year}}</p>
+								<p style="font-size: 90%">{{dayName}} | {{monthName}} {{day}}, {{year}}</p>
 							</div> 
 							<div class="col-sm-4" id="events-single-header-sub-right">
-								<p>{{location}}</p>
+								<p style="font-size: 90%">{{location}}</p>
 							</div>
 						</div>
 					</div>
 				</div>
+				<button style="margin-top: 5px;" data-slug={{slug}} id="joinEvent" type="button" class="joinEvent btn btn-s btn-primary btn-block">Join Event</button>
 				<div class="events-single-main">
 					<p>{{description}}</p>
 				</div>
@@ -54,5 +40,27 @@
 			<hr/>
 			{{/each}}
 		</div>
+		<div class="col-sm-3 offset-sm-1 events-sidebar">
+			<div class="sidebar-module sidebar-module-inset">
+				<h4>About</h4>
+				<p>Welcome to <em>Swingbook</em>! Here, you can view all upcoming lindy hop events throughout New York City.</p>
+				<p>For a list of previous events, refer to the archive below.</p>
+			</div>
+			<div class="sidebar-module">
+				<h4>Events Archive</h4>
+				<ul class="list-unstyled">
+					<li><a href="#">November 2016</a></li>
+					<li><a href="#">October 2016</a></li>
+					<li><a href="#">September 2016</a></li>
+				</ul>
+			</div>
+			<div class="sidebar-module">
+				<h4>Contact</h4>
+				<p>Feedback is always appreciated!</p>
+				<p>For questions about events or suggestions of new features, please email: <a href="#">michaeltan@nyu.edu</a></p>
+			</div>
+		</div>
 	</div>
 </div>
+
+<script src="/javascripts/event-join.js"></script>

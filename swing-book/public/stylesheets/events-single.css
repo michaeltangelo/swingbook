@@ -1,0 +1,87 @@
+/*body {
+	background: url(/images/white-bg-texture.jpg) no-repeat center center fixed;
+	background-size: cover;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	/*display: block; content:""; position: absolute; z-index:-1;
+  	top:0; left: 0; right: 0; height: 100%;
+  	opacity:.2;
+  	-webkit-filter: grayscale(100%);*/
+}*/
+
+/* Comma separated unordered list taken from: http://stackoverflow.com/questions/1517220/how-to-style-unordered-lists-in-css-as-comma-separated-text*/
+#attendingUsers {
+  display: inline;
+  list-style: none;
+}
+
+#attendingUsers li {
+  display: inline;
+}
+
+#attendingUsers li:after {
+  content: ", ";
+}
+
+.attending {
+	font-size: 12px;
+}
+
+#numAttending {
+	font-size: 15px;
+}
+
+#joinEvent {
+	margin: 10px;
+}
+
+#banner {
+	width: 100%;
+}
+
+.event-main:before {
+	/*background-image: url(http://wallpapercave.com/wp/17XP3In.jpg);*/
+}
+
+.event-main:before {
+	/*background: url(http://wallpapercave.com/wp/17XP3In.jpg) no-repeat center center fixed;*/
+	/*background-image: attr(data-url url);*/
+	background-image: url("/images/lindy-bg.jpg");
+	background-repeat: no-repeat;
+	background-position: center 35%;
+	background-size: cover;
+	border-radius: 5px;
+	border: 1px solid gray;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	display: block; content:""; position: absolute; z-index:-1;
+  	top:0; left: 0; right: 0; height: 100%;
+  	opacity:.2;
+  	-webkit-filter: grayscale(100%);
+}
+
+.event-main {
+	/*background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;*/
+	text-align: center;
+	/*border-radius: 5px;*/
+	background-color: #ffffff;
+	/*border: 1px solid gray;*/
+	opacity: 0.9;
+}
+
+#events-single-header-sub-left {
+	padding-left: 20px;
+	text-align: left;
+}
+#events-single-header-sub-right {
+	padding-right: 20px;
+	text-align: right;
+}
+
+#events-single-header-sub-center {
+	text-align: center;
+}

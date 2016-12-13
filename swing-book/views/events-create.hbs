@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-clockpicker.min.css">
+
 <!--
 <script type="text/javascript" language="javascript">
 
@@ -46,3 +48,15 @@
 <img src={{imageUrl}}>
 <br><br>
 {{/each}}
+
+<div class="input-group clockpicker" data-autoclose="true">
+    <input type="text" class="form-control" value="09:30">
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+    </span>
+</div>
+
+<script type="text/javascript" src="/javascripts/bootstrap-clockpicker.min.js"></script>
+<script type="text/javascript">
+    $('.clockpicker').clockpicker();
+</script>
