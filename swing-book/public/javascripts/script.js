@@ -1,5 +1,5 @@
 function handleSubmitClick(evt) {
-	console.log("Handle submit click called.");
+	// console.log("Handle submit click called.");
 	evt.preventDefault();
 	var formTextField = document.getElementById('testText');
 	var data = formTextField.value;
@@ -12,9 +12,9 @@ function handleSubmitClick(evt) {
 }
 
 function f() {
-	console.log("Script.js loaded.");
+	// console.log("Script.js loaded.");
 	document.addEventListener("DOMContentLoaded", function(evt) {
-		console.log("Dom is loaded.");
+		// console.log("Dom is loaded.");
 		var submit = document.getElementById('submit');
 		submit.addEventListener('click', handleSubmitClick, false)
 		// document.getElementById('testData').innerHTML

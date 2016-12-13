@@ -54,17 +54,17 @@ function f() {
 			var req = new XMLHttpRequest();
 			if (join.innerHTML === "Unattend Event") {
 				req.open('POST', '/events/'+slug+'/remove', true);
-				console.log("requesting url: /events/"+slug+'/remove');
+				// console.log("requesting url: /events/"+slug+'/remove');
 			}
 			else {
 				req.open('POST', '/events/'+slug+'/join', true);
-				console.log("requesting url: /events/"+slug+'/join');
+				// console.log("requesting url: /events/"+slug+'/join');
 			}
 			req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 			// req.send('director='+director+'&title='+title+'&year='+year);
 			req.send();
 			req.onreadystatechange = function() {
-				console.log(req.readyState);
+				// console.log(req.readyState);
 				if(req.readyState == 4 && req.status == 200) {
 					var res = req.responseText.split(",");
 					if (res[0] === "failed") {
@@ -119,7 +119,7 @@ function f() {
 							for (var i = 0; i < items.length; i++) {
 								var nameCheck = res[1] + ' ' + res[2];
 								if (items[i].getElementsByTagName('a')[0].innerHTML === nameCheck) {
-									console.log("Matched li with user: " + nameCheck + "| removing");
+									// console.log("Matched li with user: " + nameCheck + "| removing");
 									items[i].remove();
 								}
 							}
