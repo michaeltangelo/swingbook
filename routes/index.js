@@ -18,9 +18,11 @@ module.exports = function(passport) {
 	/* GET home page. */
 	router.get('/', function(req, res, next) {
 		if (!req.isAuthenticated()) {
-			res.render('index', {message: req.flash('message')});
+            res.send('GET / INDEX.JS');
+			// res.render('index', {message: req.flash('message')});
 		}
 		else {
+            console.log("Redirect to /home get get / index.js");
 			res.redirect('/home');
 		}
 		// var newUser = new User( {
@@ -43,24 +45,26 @@ module.exports = function(passport) {
 
 	router.post('/login', passport.authenticate('login', {
 		successRedirect: '/home',
-		failureRedirect: '/',
-		failureFlash : true
+		failureRedirect: '/'
 	}));
 
 	router.get('/register', function(req, res, next) {
-		res.render('register', {message: req.flash('message')});
+        console.log("in get handler for /register in index.js");
+        res.send('sent from register get handler in index.js');
+		// res.render('register', {message: req.flash('message')});
 	});
 
 	router.get('/home', isAuthenticated, function(req,res, next) {
+        res.send('HOME');
 		res.redirect('/events');
 		// res.render('home', {user: req.user, loggedIn: true});
 	});
 
-	router.post('/register', passport.authenticate('register', {
-		successRedirect: '/home',
-		failureRedirect: '/register',
-		failureFlash : true
-	}));
+	router.post('/register', passport.authenticate('register'), function(req,res, next) {
+        res.send(req.user);
+        // If passport authentication fails, will send back a 401
+	});
+
 
 	router.get('/signout', function(req, res) {
 		req.logout();
@@ -70,10 +74,10 @@ module.exports = function(passport) {
 
 	// route for facebook authentication and login
 	// different scopes while logging in
-	router.get('/login/facebook', 
+	router.get('/login/facebook',
 	  passport.authenticate('facebook', { scope : 'email'}
 	));
-	 
+
 	// handle the callback after facebook has authenticated the user
 	router.get('/login/facebook/callback',
 	  passport.authenticate('facebook', {
@@ -88,31 +92,31 @@ module.exports = function(passport) {
 	return router;
 };
 // module.exports = function(passport){
- 
+
 //   /* GET login page. */
 //   router.get('/', function(req, res) {
 //     // Display the Login page with any flash message, if any
 //     res.render('index', { message: req.flash('message') });
 //   });
- 
+
 //   /* Handle Login POST */
 //   router.post('/login', passport.authenticate('login', {
 //     successRedirect: '/home',
 //     failureRedirect: '/',
-//     failureFlash : true 
+//     failureFlash : true
 //   }));
- 
+
 //   /* GET Registration Page */
 //   router.get('/signup', function(req, res){
 //     res.render('register',{message: req.flash('message')});
 //   });
- 
+
 //   /* Handle Registration POST */
 //   router.post('/signup', passport.authenticate('signup', {
 //     successRedirect: '/home',
 //     failureRedirect: '/signup',
-//     failureFlash : true 
+//     failureFlash : true
 //   }));
- 
+
 //   return router;
 // }

@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="/stylesheets/login.css">
+
+<div class="container">
+    <div class="row">
+    	<div class="col-md-4 col-md-offset-4">
+    		<div class="panel panel-default">
+			  	<div class="panel-heading">
+			    	<h3 class="panel-title">User Registration</h3>
+			 	</div>
+			  	<div class="panel-body">
+                    <form ng-submit="submit()">
+                    <fieldset>
+			    	  	<div class="form-group">
+			    		    <input class="form-control" ng-model="user.firstName" placeholder="First Name" type="text">
+			    		</div>
+			    		<div class="form-group">
+			    		    <input class="form-control" ng-model="user.lastName" placeholder="Last Name" type="text">
+			    		</div><hr/>
+			    		<div class="form-group">
+			    		    <input class="form-control" ng-model="user.username" placeholder="Username" type="text">
+			    		</div>
+			    		<div class="form-group">
+			    			<input class="form-control" ng-model="user.password" placeholder="Password" type="password">
+			    		</div>
+			    		<div class="form-group">
+			    			<p id="errMsg">{{message}}</p>
+			    		</div>
+                        <button ng-click="submit()" class="btn btn-lg btn-success btn-block" id="loginBtn">Create an Account</button>
+			    		<a href="/"><input class="btn btn-lg btn-inverse btn-block" value="Back to Login"></a>
+			    	</fieldset>
+                    </form>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>

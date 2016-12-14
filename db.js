@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'), 
 	URLSlugs = require('mongoose-url-slugs');
+var nconf = require('nconf');
 
 
 // Level
@@ -184,6 +185,9 @@ mongoose.model('Event', Event);
 mongoose.model('Post', Post);
 mongoose.model('Level', Level);
 
+var dbConnect = nconf.get('db');
+
+mongoose.connect(dbConnect);
 // mongoose.connect('mongodb://localhost/swingbook');
-mongoose.connect('mongodb://heroku_40crhq7p:ab754h0b9dkg43p3l8biusgu92@ds133438.mlab.com:33438/heroku_40crhq7p');
+// mongoose.connect('mongodb://heroku_40crhq7p:ab754h0b9dkg43p3l8biusgu92@ds133438.mlab.com:33438/heroku_40crhq7p');
 // mongoose.connect('mongodb://mlt365:rco87Zhe@class-mongodb.cims.nyu.edu/mlt365')

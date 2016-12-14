@@ -10,8 +10,17 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var expressSession = require('express-session');
-var flash = require('connect-flash');
+// var flash = require('connect-flash');
 var async = require('async');
+var nconf = require('nconf');
+
+var ENV = process.env.NODE_ENV || 'development';
+// console.log(process.env);
+var envConfig = path.resolve(__dirname, `${ENV.toLowerCase()}.json`);
+nconf.argv().env().file({ file: envConfig });
+
+// console.log(nconf.get('db'));
+
 
 // Non auto express-generator requires
 var db = require('./db.js');
@@ -19,16 +28,19 @@ var User = mongoose.model('User');
 var fbConfig = require('./public/javascripts/fb.js');
 
 // Routes Initialization
-var index = require('./routes/index')(passport);
-var users = require('./routes/users');
+var apiRouter = require('./routes/index')(passport);
+// var users = require('./routes/users');
 var events = require('./routes/events');
-var dj = require('./routes/dj');
+// var dj = require('./routes/dj');
 
-var app = express();	
+var app = express();
+
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'hbs');
+
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -36,7 +48,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // set up express session
 app.use(expressSession({secret: 'texas tommy'}));
@@ -45,24 +56,42 @@ app.use(expressSession({secret: 'texas tommy'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// setup flash
-app.use(flash());
-
-app.use('/', index);
-app.use('/user', users);
+app.use("/node_modules", express.static(path.join(__dirname, 'node_modules')));
+app.use("/js", express.static(path.join(__dirname, 'app/js')));
+app.use("/views", express.static(path.join(__dirname, 'app/views')));
+app.use("/public", express.static(path.join(__dirname, 'public')));
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
+app.use('/app/components/', express.static(path.join(__dirname, 'app/components/')));
+app.use('/api', apiRouter);
 app.use('/events', events);
-app.use('/dj', dj);
+
+// setup flash
+// app.use(flash());
+
+app.all("/*", function(req, res, next) {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// app.use('/js', express.static(__dirname+'/app'));
+
+// app.use('/', index);
+// app.use('/user', users);
+// app.use('/events', events);
+// app.use('/dj', dj);
 
 // referenced from:
 // https://code.tutsplus.com/tutorials/authenticating-nodejs-applications-with-passport--cms-21619
 // passport/login.js
+
+
+
 passport.use('login', new LocalStrategy({
     passReqToCallback : true
   },
-  function(req, username, password, done) { 
+  function(req, username, password, done) {
     username = username.toLowerCase();
     // check in mongo if a user with username exists or not
-    User.findOne({ 'username' :  username }, 
+    User.findOne({ 'username' :  username },
       function(err, user) {
         // In case of any error, return using the done method
         if (err)
@@ -70,23 +99,20 @@ passport.use('login', new LocalStrategy({
         // Username does not exist, log error & redirect back
         if (!user){
           console.log('User Not Found with username '+username);
-          return done(null, false, 
-                req.flash('message', 'User Not found.'));                 
+          return done(null, false, {message: 'User Not Found'});
         }
         if (user.password) {
-          // User exists but wrong password, log the error 
+          // User exists but wrong password, log the error
           if (!bCrypt.compareSync(password, user.password)){
             console.log('Invalid Password');
-            return done(null, false, 
-                req.flash('message', 'Invalid Password'));
+            return done(null, false, {message: 'Invalid Password'});
           }
-          // User and password both match, return user from 
+          // User and password both match, return user from
           // done method which will be treated like success
           return done(null, user);
         }
         else {
-          return done(null, false,
-                req.flash('message', 'Please login using Facebook.'));
+          return done(null, false, {message: 'Please login using Facebook'});
         }
       }
     );
@@ -95,7 +121,7 @@ passport.use('login', new LocalStrategy({
 passport.serializeUser(function(user, done) {
   done(null, user._id);
 });
- 
+
 passport.deserializeUser(function(id, done) {
   User.findById(id, function(err, user) {
     done(err, user);
@@ -122,9 +148,9 @@ passport.use('register', new LocalStrategy({
         // already exists
         if (user) {
           console.log('User already exists');
-          return done(null, false, 
-             req.flash('message','User Already Exists'));
-        } 
+          return done(null, false,
+            {message: 'User Already Exists'});
+        }
         else {
           // if there is no user with that email
           // create the user
@@ -139,21 +165,22 @@ passport.use('register', new LocalStrategy({
           newUser.lastName = upperCaseFirst(req.body.lastName);
           newUser.password = bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
           newUser.joined = new Date();
- 
+          console.log(JSON.stringify(newUser));
+
           // save the user
           newUser.save(function(err) {
             if (err){
-              console.log('Error in Saving user: '+err);  
-              throw err;  
+              console.log('Error in Saving user: '+err);
+              throw err;
             }
-            console.log('User Registration succesful');    
-            return done(null, newUser, req.flash('message','User Registration successful'));
+            console.log('User Registration succesful');
+            return done(null, newUser, {message: 'User Registration Successful'});
           });
         }
       });
     };
-     
-    // Delay the execution of findOrCreateUser and execute 
+
+    // Delay the execution of findOrCreateUser and execute
     // the method in the next tick of the event loop
     process.nextTick(findOrCreateUser);
  }));
@@ -164,23 +191,23 @@ passport.use('facebook', new FacebookStrategy({
   callbackURL     : fbConfig.callbackUrl,
   profileFields   : ['id','friends', 'email', 'first_name', 'last_name']
 },
- 
+
   // facebook will send back the tokens and profile
   function(access_token, refresh_token, profile, done) {
   	console.log("\n\nProfile: " + JSON.stringify(profile)+"\n\n");
     // asynchronous
     process.nextTick(function() {
-     
+
       // find the user in the database based on their facebook id
       User.findOne({ 'fb.id' : profile.id }, function(err, user) {
- 
+
         // if there is an error, stop everything and return that
         // ie an error connecting to the database
         if (err){
         	console.log("err in User.findOne: " + err);
           return done(err);
       	}
- 
+
           // if the user is found, then log them in
           if (user) {
           	console.log("User is found.");
@@ -192,8 +219,8 @@ passport.use('facebook', new FacebookStrategy({
 			newUser.joined = new Date();
 
             // set all of the facebook information in our user model
-            newUser.fb.id    = profile.id; // set the users facebook id                 
-            newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user                    
+            newUser.fb.id    = profile.id; // set the users facebook id
+            newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user
             newUser.fb.firstName  = profile.name.givenName;
             newUser.fb.lastName = profile.name.familyName; // look at the passport user profile to see how names are returned
             newUser.firstName = profile.name.givenName;
@@ -202,16 +229,16 @@ passport.use('facebook', new FacebookStrategy({
             console.log("4Set all newUser properties. newUser is now: " + newUser);
             console.log("profile: " + JSON.stringify(profile));
             // newUser.fb.email = profile.emails[0].value; // facebook can return multiple emails so we'll take the first
- 
+
             // save our user to the database
             newUser.save(function(err) {
               if (err)
                 throw err;
- 
+
               // if successful, return the new user
               return done(null, newUser);
             });
-         } 
+         }
       });
     });
 }));
@@ -235,4 +262,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+app.listen('3000');

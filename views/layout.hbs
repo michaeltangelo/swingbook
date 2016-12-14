@@ -6,6 +6,7 @@
 
     <!-- Loading Bootstrap -->
     <link href="/stylesheets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/flat-ui.css'/>
 
     <link rel='stylesheet' href='/stylesheets/style.css'/>
     <!-- Google Analytics -->
@@ -23,6 +24,7 @@
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
     <script src="/javascripts/vendor/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <div class="nav-wrap">
     <nav style="border-radius: 0px;" class="navbar navbar-inverse navbar-embossed" role="navigation">
       <a class="navbar-brand" href="/home">Swingbook</a>
       <ul class="nav navbar-nav">
@@ -32,9 +34,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/dj">Swing DJ</a>
         </li>
-      </ul>
-      <ul id="signOut" class="nav navbar-nav navbar-right">
-        <li class="nav-item">
+        <li class="nav-item" id="signOut">
           {{#if loggedIn}}
           <a class="nav-link" href="/signout">Sign out</a>
           {{else}}
@@ -42,7 +42,9 @@
           {{/if}}
         </li>
       </ul>
+
     </nav>
+    </div>
     {{{body}}}
 
     <script src="/javascripts/vendor/video.js"></script>
