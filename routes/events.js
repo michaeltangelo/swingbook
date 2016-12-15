@@ -17,19 +17,10 @@ var isAuthenticated = function (req, res, next) {
 // Get default /events page
 // Show only the next week of events
 router.get('/', function(req, res, next) {
-	// Event.find({}).sort('-date').exec(function(err, events) {
-	// 	res.render('events', {events: events, user: req.user});
-	// });
-
- // date: {$gt: now, $lt: now + 7 * 24 * 60 * 60 * 1000}
- 	var loggedIn = false;
- 	if (req.isAuthenticated()) {
- 		loggedIn = true;
- 	}
-	var now = new Date();
-	Event.find({
-	}).sort('-date').exec(function(err, events) {
-		res.render('events', {events: events, user: req.user, loggedIn: loggedIn});
+	Event.find({}).sort('-date').exec(function(err, events) {
+        if (err) res.send({err: err});
+        else res.send(events);
+		// res.render('events', {events: events, user: req.user});
 	});
 });
 

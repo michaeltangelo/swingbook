@@ -1,0 +1,46 @@
+.events-single-bg{
+	border-radius: 5px;
+	/*background-image: url(http://i.imgur.com/oBoKsrR.jpg);*/
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	/*-webkit-background-clip: content-box;*/
+	/*opacity: 0.5;*/
+	/*opacity: 0.4;*/
+}
+
+.events-single-header {
+	border-radius: 5px;
+	background-color: #ffffff;
+	border: 1px solid gray;
+	opacity: 0.8;
+	/*-webkit-background-clip: content-box;*/
+	/*background-image: url(http://i.imgur.com/oBoKsrR.jpg);*/
+	/*background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;*/
+	/*width:
+	/*height: 250px;*/
+}
+
+.events-single-header * {
+	text-align: center;
+}
+
+#events-single-header-sub-left {
+	/*position: relative;*/
+	text-align: left;
+}
+
+/*#events-single-header-sub-left p {
+	display: inline-block;
+}*/
+
+#events-single-header-sub-right {
+	/*position: relative;*/
+	text-align: right;
+}
+/*
+#events-single-header-sub-right p {
+	display: inline-block;
+}*/
