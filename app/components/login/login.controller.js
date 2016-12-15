@@ -1,22 +1,19 @@
-app.controller("loginCtrl", function($scope, $http){
-    $scope.submitCap = 0;
-    $scope.message = "wokring";
+app.controller("loginCtrl", function($scope, $http, $state, Account){
+    if (Account.isLoggedIn()) $state.go("home");
+
+    $scope.message = "";
     $scope.user = {
-        firstName: "",
-        lastName: "",
         username: "",
         password: ""
     };
-    $scope.submit = function() {
-        if ($scope.submitCap > 0) return;
-        else $scope.submitCap++;
-        $http.post('/api/register', $scope.user)
-        .then(function(result) {
 
-        }, function(result) {
-            // If error registering user
-            $scope.message = "Username already exists.";
+
+    $scope.submit = function() {
+        var u = $scope.user;
+        Account.login(u, function(data) {
+            console.log(data);
+            console.log("Finished!");
         });
     };
-    console.log("Login controller.");
+    console.log("login controller.");
 });

@@ -43,10 +43,19 @@ module.exports = function(passport) {
 		// res.render('index', context);
 	});
 
-	router.post('/login', passport.authenticate('login', {
-		successRedirect: '/home',
-		failureRedirect: '/'
-	}));
+    router.post('/login', function(req, res, next) {
+        passport.authenticate('login', function(err, user, info) {
+            console.log("Inside callback for authenticate");
+            var response = {user: user, info: info};
+            return res.send(response);
+        })(req, res, next);
+    });
+
+	// router.post('/login', passport.authenticate('login', function(err, user, messageObj, next) {
+    //     console.log(err);
+    //     console.log(user);
+    //     console.log(messageObj);
+    // }));
 
 	router.get('/register', function(req, res, next) {
         console.log("in get handler for /register in index.js");

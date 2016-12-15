@@ -1,10 +1,12 @@
-app.controller("homeCtrl", function($scope, $http, $state){
+app.controller("homeCtrl", function($scope, $http, $state, Account){
+    if (!Account.isLoggedIn()) $state.go("login");
+
     console.log("home controller");
     $scope.message = "hello michael";
     $scope.user = {
         username: "anthony",
     };
-    // 
+    //
     // $http
     // .get("/api/currentUser")
     // .then(function(data){

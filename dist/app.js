@@ -20,8 +20,13 @@ app.directive('navBar', function() {
 app.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", function($stateProvider, $urlRouterProvider,$locationProvider){
     $urlRouterProvider.otherwise("/");
     $stateProvider
-    .state("home", {
+    .state('landing', {
         url: "/",
+        controller: "landingCtrl",
+        templateUrl: "app/components/landing/views/landing.html"
+    })
+    .state("home", {
+        url: "/home",
         controller: "homeCtrl",
         templateUrl: "app/components/home/views/home.html"
     })
@@ -34,16 +39,27 @@ app.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", functio
         url: "/login",
         controller: "loginCtrl",
         templateUrl: "app/components/login/views/login.html"
+    })
+    .state("register", {
+        url: "/register",
+        controller: "registerCtrl",
+        templateUrl: "app/components/register/views/register.html"
     });
 }]);
 
-app.controller("homeCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+app.controller("eventsCtrl", ["$scope", function($scope){
+    console.log("Events controller.");
+}]);
+
+app.controller("homeCtrl", ["$scope", "$http", "$state", "Account", function($scope, $http, $state, Account){
+    if (!Account.isLoggedIn()) $state.go("login");
+
     console.log("home controller");
     $scope.message = "hello michael";
     $scope.user = {
         username: "anthony",
     };
-    // 
+    //
     // $http
     // .get("/api/currentUser")
     // .then(function(data){
@@ -54,12 +70,36 @@ app.controller("homeCtrl", ["$scope", "$http", "$state", function($scope, $http,
     // });
 }]);
 
-app.controller("eventsCtrl", ["$scope", function($scope){
-    console.log("Events controller.");
+app.controller("landingCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+    console.log("landing controller.");
+    $scope.taglines = [
+        "Music rankings suck",
+        "Because they don't account for your taste.",
+        "So find people who rank music like you do."
+    ];
 }]);
 
-app.controller("loginCtrl", ["$scope", "$http", function($scope, $http){
-    $scope.submitCap = 0;
+app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", function($scope, $http, $state, Account){
+    if (Account.isLoggedIn()) $state.go("home");
+
+    $scope.message = "";
+    $scope.user = {
+        username: "",
+        password: ""
+    };
+
+
+    $scope.submit = function() {
+        var u = $scope.user;
+        Account.login(u, function(data) {
+            console.log(data);
+            console.log("Finished!");
+        });
+    };
+    console.log("login controller.");
+}]);
+
+app.controller("registerCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
     $scope.message = "wokring";
     $scope.user = {
         firstName: "",
@@ -68,15 +108,78 @@ app.controller("loginCtrl", ["$scope", "$http", function($scope, $http){
         password: ""
     };
     $scope.submit = function() {
-        if ($scope.submitCap > 0) return;
-        else $scope.submitCap++;
         $http.post('/api/register', $scope.user)
         .then(function(result) {
-
+            $state.go("home");
         }, function(result) {
             // If error registering user
             $scope.message = "Username already exists.";
         });
     };
-    console.log("Login controller.");
+    console.log("register controller.");
+}]);
+
+// From aksperiod Polycritic site
+app.service('Account', ["$http", "$state", "$rootScope", function($http, $state, $rootScope) {
+  var isLoggedIn = false;
+  var user = {};
+  var errMsg = "";
+  var login = function(c) {
+    console.log("Login function called in Account service.");
+    $http.post('/api/login',{
+      username:c.username.toLowerCase(),
+      password:c.password
+    }).then(function(data) {
+        console.log("after post return");
+      if (data.data.user) {
+          console.log("Success");
+      }
+      else {
+          console.log(data.data.info.message);
+      }
+      user = data.data;
+      errMsg = "";
+      isLoggedIn = true;
+    //   $rootScope.$broadcast("user-state-change");
+      $state.go("home", {
+        user: user,
+        username: user.username,
+      });
+    });
+  };
+
+  var logout = function() {
+    $http
+    .get("/logout")
+    .then(function(response) {
+      if(response.status === 200) {
+        $state.go("login");
+        isLoggedIn = false;
+        user = {};
+        errMsg = "";
+        // $rootScope.$broadcast("user-state-change");
+      }
+    }, function(response) {
+        console.log("Error in logging out.");
+        errMsg = "Log out failed.";
+    });
+  };
+
+  var initialize = function(u) {
+    user = u;
+    isLoggedIn = true;
+    $rootScope.$broadcast("user-state-change");
+  };
+
+  return {
+    isLoggedIn: function(){
+      return isLoggedIn;
+    },
+    login: login,
+    logout: logout,
+    user: function() {
+      return user;
+    },
+    initialize: initialize,
+  };
 }]);
