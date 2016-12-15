@@ -10,9 +10,13 @@ app.controller("loginCtrl", function($scope, $http, $state, Account){
 
     $scope.submit = function() {
         var u = $scope.user;
-        Account.login(u, function(data) {
-            console.log(data);
-            console.log("Finished!");
+        Account.login(u)
+        .then(function(user) {
+            // Login was successful - Should auto redirect to home
+        }, function(errMsg) {
+            // Login was unsuccessul
+            console.log("The error message received is: " + errMsg);
+            $scope.message = errMsg;
         });
     };
     console.log("login controller.");

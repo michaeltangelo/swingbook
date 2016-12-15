@@ -91,9 +91,13 @@ app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", function($s
 
     $scope.submit = function() {
         var u = $scope.user;
-        Account.login(u, function(data) {
-            console.log(data);
-            console.log("Finished!");
+        Account.login(u)
+        .then(function(user) {
+            // Login was successful - Should auto redirect to home
+        }, function(errMsg) {
+            // Login was unsuccessul
+            console.log("The error message received is: " + errMsg);
+            $scope.message = errMsg;
         });
     };
     console.log("login controller.");
@@ -120,12 +124,14 @@ app.controller("registerCtrl", ["$scope", "$http", "$state", function($scope, $h
 }]);
 
 // From aksperiod Polycritic site
-app.service('Account', ["$http", "$state", "$rootScope", function($http, $state, $rootScope) {
+app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $state, $rootScope, $q) {
   var isLoggedIn = false;
   var user = {};
   var errMsg = "";
   var login = function(c) {
     console.log("Login function called in Account service.");
+    var deferred = $q.defer();
+
     $http.post('/api/login',{
       username:c.username.toLowerCase(),
       password:c.password
@@ -133,19 +139,28 @@ app.service('Account', ["$http", "$state", "$rootScope", function($http, $state,
         console.log("after post return");
       if (data.data.user) {
           console.log("Success");
+          // Resolve the promise passing in the user
+          errMsg = "";
+          deferred.resolve(data.data.user);
+          user = data.data;
+          isLoggedIn = true;
+        //   $rootScope.$broadcast("user-state-change");
+          $state.go("home", {
+            user: user,
+            username: user.username,
+          });
       }
       else {
           console.log(data.data.info.message);
+          // Reject the promise passing in the errMsg
+          errMsg = data.data.info.message;
+          deferred.reject(errMsg);
       }
-      user = data.data;
-      errMsg = "";
-      isLoggedIn = true;
-    //   $rootScope.$broadcast("user-state-change");
-      $state.go("home", {
-        user: user,
-        username: user.username,
-      });
     });
+
+    // set errMsg to be a promise until result
+    errMsg = deferred.promise;
+    return $q.when(errMsg);
   };
 
   var logout = function() {
