@@ -16,6 +16,21 @@ app.config(function($stateProvider, $urlRouterProvider,$locationProvider){
         controller: "eventsCtrl",
         templateUrl: "app/components/events/views/events.html"
     })
+    .state("event", {
+        url: "/event/:slug",
+        controller: "eventCtrl",
+        templateUrl: "app/components/event/views/event.html"
+    })
+    .state("createEvent", {
+        url: "/events/create",
+        controller: "createEventCtrl",
+        templateUrl: "app/components/events/create/view/createEvent.html"
+    })
+    .state("user", {
+        url: "/user/:username",
+        controller: "userCtrl",
+        templateUrl: "app/components/user/views/user.html"
+    })
     .state("login", {
         url: "/login",
         controller: "loginCtrl",

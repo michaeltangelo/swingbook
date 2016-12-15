@@ -35,6 +35,21 @@ app.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", functio
         controller: "eventsCtrl",
         templateUrl: "app/components/events/views/events.html"
     })
+    .state("event", {
+        url: "/event/:slug",
+        controller: "eventCtrl",
+        templateUrl: "app/components/event/views/event.html"
+    })
+    .state("createEvent", {
+        url: "/events/create",
+        controller: "createEventCtrl",
+        templateUrl: "app/components/events/create/view/createEvent.html"
+    })
+    .state("user", {
+        url: "/user/:username",
+        controller: "userCtrl",
+        templateUrl: "app/components/user/views/user.html"
+    })
     .state("login", {
         url: "/login",
         controller: "loginCtrl",
@@ -47,12 +62,30 @@ app.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", functio
     });
 }]);
 
-app.controller("eventsCtrl", ["$scope", function($scope){
-    console.log("Events controller.");
+app.controller("eventsCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+    console.log("eventsctrl");
+    $scope.events = [];
+
+    $http
+    .get('/api/events')
+    .then(function(response) {
+        if (response.data.err) {
+            console.log("Error in retrieving events: " + response.data.err);
+            return;
+        }
+        $scope.events = response.data.map(function(event) {
+            return event;
+        });
+    });
+
+    $scope.gotoCreateEvent = function() {
+        $state.go("createEvent");
+    };
 }]);
 
 app.controller("homeCtrl", ["$scope", "$http", "$state", "Account", function($scope, $http, $state, Account){
     if (!Account.isLoggedIn()) $state.go("login");
+    else $state.go("events");
 
     console.log("home controller");
     $scope.message = "hello michael";
@@ -197,4 +230,8 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
     },
     initialize: initialize,
   };
+}]);
+
+app.controller("createEventCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+    console.log("createEventsCtrl");
 }]);

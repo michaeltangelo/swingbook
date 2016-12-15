@@ -35,12 +35,10 @@ var events = require('./routes/events');
 
 var app = express();
 
-
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'hbs');
-
-
+// app.engine('html', require('ejs').renderFile);
+// app.set('view engine', 'html');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -62,8 +60,10 @@ app.use("/views", express.static(path.join(__dirname, 'app/views')));
 app.use("/public", express.static(path.join(__dirname, 'public')));
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
 app.use('/app/components/', express.static(path.join(__dirname, 'app/components/')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/api', apiRouter);
-app.use('/events', events);
+app.use('/api/events', events);
+// app.use('/events', events);
 
 // setup flash
 // app.use(flash());
