@@ -1,4 +1,4 @@
-var mongoose = require('mongoose'), 
+var mongoose = require('mongoose'),
 	URLSlugs = require('mongoose-url-slugs');
 var nconf = require('nconf');
 
@@ -45,6 +45,7 @@ var Event = new mongoose.Schema( {
     day: String,
     dayName: String,
     monthName: String,
+	owner: { type: mongoose.Schema.ObjectId, ref: 'owner' },
 
     // The maybe attending users
     maybes: [{type: mongoose.Schema.ObjectId, ref: 'maybes'}],

@@ -22,9 +22,9 @@ app.config(function($stateProvider, $urlRouterProvider,$locationProvider){
         templateUrl: "app/components/event/views/event.html"
     })
     .state("createEvent", {
-        url: "/events/create",
+        url: "/createEvent",
         controller: "createEventCtrl",
-        templateUrl: "app/components/events/create/view/createEvent.html"
+        templateUrl: "app/components/createEvent/view/createEvent.html"
     })
     .state("user", {
         url: "/user/:username",
@@ -34,11 +34,19 @@ app.config(function($stateProvider, $urlRouterProvider,$locationProvider){
     .state("login", {
         url: "/login",
         controller: "loginCtrl",
-        templateUrl: "app/components/login/views/login.html"
+        templateUrl: "app/components/login/views/login.html",
+        params: {
+            lastUrl: null
+        }
     })
     .state("register", {
         url: "/register",
         controller: "registerCtrl",
         templateUrl: "app/components/register/views/register.html"
+    })
+    .state("test", {
+        url: "/test",
+        controller: "testCtrl",
+        templateUrl: "app/components/test/views/test.html"
     });
 });

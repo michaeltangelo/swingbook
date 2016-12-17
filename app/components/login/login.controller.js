@@ -1,5 +1,10 @@
-app.controller("loginCtrl", function($scope, $http, $state, Account){
+app.controller("loginCtrl", function($scope, $http, $state, Account, $stateParams){
     if (Account.isLoggedIn()) $state.go("home");
+
+    $scope.postLoginRedirectState = "";
+    if ($stateParams && $stateParams.lastUrl) {
+        $scope.postLoginRedirectState = $stateParams.lastUrl;
+    }
 
     $scope.message = "";
     $scope.user = {
@@ -10,9 +15,11 @@ app.controller("loginCtrl", function($scope, $http, $state, Account){
 
     $scope.submit = function() {
         var u = $scope.user;
-        Account.login(u)
+        var redirectState = $scope.postLoginRedirectState;
+        Account.login(u, redirectState)
         .then(function(user) {
-            // Login was successful - Should auto redirect to home
+            // Login was successful - reset lastUrl
+            $scope.postLoginRedirectState = "";
         }, function(errMsg) {
             // Login was unsuccessul
             console.log("The error message received is: " + errMsg);

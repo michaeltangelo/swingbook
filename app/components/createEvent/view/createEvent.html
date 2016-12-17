@@ -1,0 +1,32 @@
+<!-- <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-clockpicker.min.css"> -->
+
+<h1>Create new Event</h1>
+
+<form name="createEvent" ng-submit="submit()">
+	Event Name: <input type="text" ng-model="event.name" id="name" required><br>
+	Date: <input type="date" ng-model="event.date" id="date" required><br>
+	Start Time: <input type="time" ng-model="event.start" id="start" required><br>
+	End Time: <input type="time" ng-model="event.end" id="end" required><br>
+	<input type="radio" ng-model="event.recurring" value="never" checked>One Time</br>
+	<input type="radio" ng-model="event.recurring" value="weekly">Weekly</br>
+	<input type="radio" ng-model="event.recurring" value="monthly">Monthly</br>
+	Location: <input type="text" ng-model="event.location" id="location" required><br>
+	Image Url: <input type="url" ng-model="event.imageUrl" id="imageUrl"><br>
+	Description: <textarea rows="4" cols="50" ng-model="event.description"></textarea><br>
+	<input type="submit" id="submit" value="Create">
+	<p id="errMsg" style="{color: red}"><p>
+</form>
+
+<button ng-click="populateForm()">Populate Form</button>
+
+<!-- <div class="input-group clockpicker" data-autoclose="true">
+    <input type="text" class="form-control" value="09:30">
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+    </span>
+</div> -->
+
+<!-- <script type="text/javascript" src="/javascripts/bootstrap-clockpicker.min.js"></script>
+<script type="text/javascript">
+    $('.clockpicker').clockpicker();
+</script> -->

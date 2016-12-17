@@ -25,6 +25,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/create', isAuthenticated, function(req, res, next) {
+    console.log("get create");
 	res.render('events-create', {user: req.user, loggedIn: true});
 });
 
@@ -184,7 +185,10 @@ router.post('/:slug/join', function(req, res, next) {
 	// res.send(req.user._id)
 });
 
-router.post('/create', isAuthenticated, function(req, res, next) {
+router.post('/create', function(req, res, next) {
+    console.log("create hit in server api");
+    res.send('hi');
+    return;
 	console.log(req.body);
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

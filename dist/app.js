@@ -41,9 +41,9 @@ app.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", functio
         templateUrl: "app/components/event/views/event.html"
     })
     .state("createEvent", {
-        url: "/events/create",
+        url: "/createEvent",
         controller: "createEventCtrl",
-        templateUrl: "app/components/events/create/view/createEvent.html"
+        templateUrl: "app/components/createEvent/view/createEvent.html"
     })
     .state("user", {
         url: "/user/:username",
@@ -53,13 +53,76 @@ app.config(["$stateProvider", "$urlRouterProvider", "$locationProvider", functio
     .state("login", {
         url: "/login",
         controller: "loginCtrl",
-        templateUrl: "app/components/login/views/login.html"
+        templateUrl: "app/components/login/views/login.html",
+        params: {
+            lastUrl: null
+        }
     })
     .state("register", {
         url: "/register",
         controller: "registerCtrl",
         templateUrl: "app/components/register/views/register.html"
+    })
+    .state("test", {
+        url: "/test",
+        controller: "testCtrl",
+        templateUrl: "app/components/test/views/test.html"
     });
+}]);
+
+app.controller("createEventCtrl", ["$scope", "$http", "$state", "Event", "Account", function($scope, $http, $state, Event, Account){
+    if (!Account.isLoggedIn()) {
+        $state.go("login", {lastUrl: $state.current.name});
+    }
+    else {
+        $scope.event = {
+            name: "",
+            date: "",
+            start: "",
+            end: "",
+            recurring: "",
+            location: "",
+            imageUrl: "",
+            description: "",
+        };
+
+        $scope.populateForm = function() {
+            console.log("set new event");
+            $scope.event = {
+                name: "Frim Fram",
+                date: "2016-11-30T05:00:00.000Z",
+                start: "1970-01-01T14:01:00.000Z",
+                end: "1970-01-01T16:11:00.000Z",
+                recurring: "never",
+                location: "412 8th Ave",
+                imageUrl: "",
+                description: "This is a description",
+            };
+        };
+        $scope.populateForm();
+
+        $scope.errMsg = "No error";
+
+        $scope.submit = function() {
+            console.log("Submit clicked.");
+            var newEvent = new Event($scope.event);
+            // Save method needs to be impleemnted on Event class
+            newEvent.save()
+            .then(function(response) {
+                console.log("success: " + JSON.stringify(response));
+            }, function(response){
+                console.log("rejected: "  + JSON.stringify(response));
+            });
+            //
+            // $http
+            // .post('/api/events/create')
+            // .then(function(response) {
+            //     console.log("success: " + JSON.stringify(response));
+            // }, function(response) {
+            //     console.log("rejected: "  + JSON.stringify(response));
+            // });
+        };
+    }
 }]);
 
 app.controller("eventsCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
@@ -112,8 +175,13 @@ app.controller("landingCtrl", ["$scope", "$http", "$state", function($scope, $ht
     ];
 }]);
 
-app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", function($scope, $http, $state, Account){
+app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", "$stateParams", function($scope, $http, $state, Account, $stateParams){
     if (Account.isLoggedIn()) $state.go("home");
+
+    $scope.postLoginRedirectState = "";
+    if ($stateParams && $stateParams.lastUrl) {
+        $scope.postLoginRedirectState = $stateParams.lastUrl;
+    }
 
     $scope.message = "";
     $scope.user = {
@@ -124,9 +192,11 @@ app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", function($s
 
     $scope.submit = function() {
         var u = $scope.user;
-        Account.login(u)
+        var redirectState = $scope.postLoginRedirectState;
+        Account.login(u, redirectState)
         .then(function(user) {
-            // Login was successful - Should auto redirect to home
+            // Login was successful - reset lastUrl
+            $scope.postLoginRedirectState = "";
         }, function(errMsg) {
             // Login was unsuccessul
             console.log("The error message received is: " + errMsg);
@@ -161,7 +231,7 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
   var isLoggedIn = false;
   var user = {};
   var errMsg = "";
-  var login = function(c) {
+  var login = function(c, redirectState) {
     console.log("Login function called in Account service.");
     var deferred = $q.defer();
 
@@ -178,7 +248,8 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
           user = data.data;
           isLoggedIn = true;
         //   $rootScope.$broadcast("user-state-change");
-          $state.go("home", {
+          var redirect = (redirectState && $state.href(redirectState)) ? redirectState : "home";
+          $state.go(redirect, {
             user: user,
             username: user.username,
           });
@@ -232,6 +303,111 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
   };
 }]);
 
-app.controller("createEventCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
-    console.log("createEventsCtrl");
+app.controller("testCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+    $scope.testStr = "";
+
+    $http
+    .get('/api/test')
+    .then(function(response) {
+        $scope.testStr = response.data;
+    });
+}]);
+
+app.factory("Event", ["$http", function($http) {
+    function Event(eventObj) {
+        var event = eventObj;
+
+        var update = function(eventObj) {
+            if (eventObj) {
+                for (var key in eventObj) {
+                    // Skip if property is from prototype
+                    if(!eventObj.hasOwnProperty(key)) continue;
+                    event[key] = eventObj[key];
+                }
+            }
+        };
+
+        var save = function() {
+            console.log("save function called");
+            return (
+                $http
+                .post('/api/events/create', {event})
+            );
+        };
+        return {
+            event,
+            update,
+            save
+        };
+
+        //
+        // var list = [];
+        // var pristine = [];
+        // var add = function(obj) {
+        //     list.push(obj);
+        // };
+        //
+        // var get = function(i) {
+        //     if(validIndex(i))
+        //     return list[i];
+        // };
+        //
+        // var last = function() {
+        //     return list[list.length-1];
+        // };
+        //
+        // var remove = function(i) {
+        //     if(validIndex(i))
+        //     return list.splice(i,1).length;
+        //     return false;
+        // };
+        //
+        // var all = function() {
+        //     return list;
+        // };
+        //
+        // var create = function(obj) {
+        //     list = obj;
+        //     pristine = angular.copy(obj);
+        // };
+        //
+        // var validIndex = function(i) {
+        //     if(!list.length) return false;
+        //     if(i===0) return !!list.length;
+        //     return i && i<list.length && i>=0;
+        // };
+        //
+        // var set = function(i, obj) {
+        //     if(validIndex(i)) {
+        //         for(var key in obj) {
+        //             list[i][key] = obj[key];
+        //         }
+        //     }
+        // };
+        //
+        // var size = function() {
+        //     return list.length;
+        // };
+        // var resetPristineObject = function() {
+        //     pristine = angular.copy(list);
+        // };
+        //
+        // return {
+        //     add,
+        //     set,
+        //     get,
+        //     last,
+        //     remove,
+        //     all,
+        //     create,
+        //     validIndex,
+        //     size,
+        //     resetPristineObject,
+        //     isPristine: function() {
+        //         if(list.length !== pristine.length) return false;
+        //         return angular.equals(list, pristine);
+        //     }
+        // };
+    }
+    return Event;
 }]);
