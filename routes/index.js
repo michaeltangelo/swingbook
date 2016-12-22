@@ -4,8 +4,6 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Events = mongoose.model('Event');
 var passport = require('passport');
-
-var urlGenerator = require('../unique-url-generator.js');
 // var authenticated = require('../public/javascripts/authenticated.js');
 
 
