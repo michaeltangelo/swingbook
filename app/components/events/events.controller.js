@@ -1,5 +1,6 @@
-app.controller("eventsCtrl", function($scope, $http, $state){
+app.controller("eventsCtrl", function($scope, $http, $state, Account){
     console.log("eventsctrl");
+    console.log("Login Status: " + Account.isLoggedIn());
     $scope.events = [];
 
     $http
