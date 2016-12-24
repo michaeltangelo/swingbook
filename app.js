@@ -93,25 +93,31 @@ passport.use('login', new LocalStrategy({
     // check in mongo if a user with username exists or not
     User.findOne({ 'username' :  username },
       function(err, user) {
+        console.log("Searched database for user.");
         // In case of any error, return using the done method
-        if (err)
-          return done(err);
+        if (err) {
+            console.log("Error in finding user: " + err);
+            return done(err);
+        }
         // Username does not exist, log error & redirect back
         if (!user){
           console.log('User Not Found with username '+username);
           return done(null, false, {message: 'User Not Found'});
         }
         if (user.password) {
+            console.log("Comparing password");
           // User exists but wrong password, log the error
           if (!bCrypt.compareSync(password, user.password)){
             console.log('Invalid Password');
             return done(null, false, {message: 'Invalid Password'});
           }
+          console.log("Success! Returning user: " + JSON.stringify(user));
           // User and password both match, return user from
           // done method which will be treated like success
           return done(null, user);
         }
         else {
+            console.log("Should login using facebook instead");
           return done(null, false, {message: 'Please login using Facebook'});
         }
       }

@@ -3,16 +3,17 @@ var app = angular.module("app", [
 ]);
 
 app.config(["$locationProvider", function($locationProvider){
-    $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
-    });
+    $locationProvider.html5Mode(true);
+}]);
+
+app.run(["Account", function(Account) {
+    Account.updateLoginStatus();
 }]);
 
 app.directive('navBar', function() {
     return {
         restrict: "E",
-        templateUrl: "app/components/navbar/views/navbar.view.html",
+        templateUrl: "app/components/navbar/views/navbar.html",
         controller: "navCtrl"
     };
 });
@@ -125,8 +126,9 @@ app.controller("createEventCtrl", ["$scope", "$http", "$state", "Event", "Accoun
     }
 }]);
 
-app.controller("eventsCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+app.controller("eventsCtrl", ["$scope", "$http", "$state", "Account", function($scope, $http, $state, Account){
     console.log("eventsctrl");
+    console.log("Login Status: " + Account.isLoggedIn());
     $scope.events = [];
 
     $http
@@ -191,8 +193,10 @@ app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", "$statePara
 
 
     $scope.submit = function() {
+        console.log("Inside submit.");
         var u = $scope.user;
         var redirectState = $scope.postLoginRedirectState;
+        console.log("Submitting login request with info: " + JSON.stringify(u));
         Account.login(u, redirectState)
         .then(function(user) {
             // Login was successful - reset lastUrl
@@ -204,6 +208,69 @@ app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", "$statePara
         });
     };
     console.log("login controller.");
+}]);
+
+app.controller('navCtrl', ["$scope", "$state", "Account", "$rootScope", "$timeout", function($scope, $state, Account, $rootScope, $timeout){
+  $scope.$on("user-state-change", function() {
+    console.log("user state change");
+    setItems();
+  });
+  $scope.isOpen = false;
+
+  $scope.toggleOpen = function() {
+    if(!$scope.isOpen) {
+      $scope.isOpen = !$scope.isOpen;
+      $rootScope.overlayOn = $scope.isOpen;
+      $timeout(function(){
+        $('._nav-overlay .inner .item').css({
+          "animation-name": "fade-up",
+          "animation-duration": "500ms",
+          "animation-fill-mode": "forwards",
+        });
+      });
+    } else {
+      $('._nav-overlay .inner .item').css({
+        "animation-name": "fade-down",
+        "animation-duration": "500ms",
+        "animation-fill-mode": "backwards",
+      });
+      $timeout(function(){
+        $scope.isOpen = !$scope.isOpen;
+        $rootScope.overlayOn = $scope.isOpen;
+      }, 500);
+    }
+  };
+  $scope.goTo = function(link) {
+    $scope.isOpen = false;
+    $rootScope.overlayOn = $scope.isOpen;
+    $state.go(link);
+  };
+
+  function setItems() {
+    $scope.items = [{
+      name:Account.user().username,
+      link:"home",
+      on: Account.isLoggedIn(),
+    },{
+      name:"Feed",
+      link:"feed",
+      on: true,
+    },{
+      name:"All",
+      link:"all",
+      on:  Account.isLoggedIn(),
+    },{
+      name:"Login",
+      link:"login",
+      on: !Account.isLoggedIn(),
+    },{
+      name:"Logout",
+      link:"logout",
+      on: Account.isLoggedIn(),
+    }].reverse();
+  }
+  setItems();
+
 }]);
 
 app.controller("registerCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
@@ -341,39 +408,25 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
   var user = {};
   var errMsg = "";
   var login = function(c, redirectState) {
-    console.log("Login function called in Account service.");
-    var deferred = $q.defer();
-
-    $http.post('/api/login',{
-      username:c.username.toLowerCase(),
-      password:c.password
-    }).then(function(data) {
-        console.log("after post return");
-      if (data.data.user) {
-          console.log("Success");
-          // Resolve the promise passing in the user
-          errMsg = "";
-          deferred.resolve(data.data.user);
-          user = data.data;
-          isLoggedIn = true;
-        //   $rootScope.$broadcast("user-state-change");
-          var redirect = (redirectState && $state.href(redirectState)) ? redirectState : "home";
-          $state.go(redirect, {
-            user: user,
-            username: user.username,
+      return $q(function(resolve, reject){
+          $http.post('/api/login',{
+              username:c.username.toLowerCase(),
+              password:c.password
+          }).then(function(data) {
+              user = data.data;
+              isLoggedIn = true;
+              //   $rootScope.$broadcast("user-state-change");
+              var redirect = (redirectState && $state.href(redirectState)) ? redirectState : "home";
+              $state.go(redirect, {
+                  user: user,
+                  username: user.username,
+              });
+          }, function(err) {
+              if(err.status === 401){
+                  reject("Invalid username or password.");
+              }
           });
-      }
-      else {
-          console.log(data.data.info.message);
-          // Reject the promise passing in the errMsg
-          errMsg = data.data.info.message;
-          deferred.reject(errMsg);
-      }
     });
-
-    // set errMsg to be a promise until result
-    errMsg = deferred.promise;
-    return $q.when(errMsg);
   };
 
   var logout = function() {
@@ -396,7 +449,23 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
   var initialize = function(u) {
     user = u;
     isLoggedIn = true;
-    $rootScope.$broadcast("user-state-change");
+    // $rootScope.$broadcast("user-state-change");
+  };
+
+  var updateLoginStatus = function() {
+      $http
+      .get("/api/isLoggedIn")
+      .then(function(response) {
+          if (response.data==="0") {
+              user = {};
+              isLoggedIn = false;
+          }
+          else {
+              initialize(response.data);
+          }
+      }, function(response) {
+          console.log("Something failed in isLoggedIn on server side.");
+      });
   };
 
   return {
@@ -409,5 +478,6 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
       return user;
     },
     initialize: initialize,
+    updateLoginStatus: updateLoginStatus
   };
 }]);

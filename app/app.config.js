@@ -3,16 +3,17 @@ var app = angular.module("app", [
 ]);
 
 app.config(function($locationProvider){
-    $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
-    });
+    $locationProvider.html5Mode(true);
+});
+
+app.run(function(Account) {
+    Account.updateLoginStatus();
 });
 
 app.directive('navBar', function() {
     return {
         restrict: "E",
-        templateUrl: "app/components/navbar/views/navbar.view.html",
+        templateUrl: "app/components/navbar/views/navbar.html",
         controller: "navCtrl"
     };
 });

@@ -43,12 +43,14 @@ module.exports = function(passport) {
 		// res.render('index', context);
 	});
 
-    router.post('/login', function(req, res, next) {
-        passport.authenticate('login', function(err, user, info) {
-            console.log("Inside callback for authenticate");
-            var response = {user: user, info: info};
-            return res.send(response);
-        })(req, res, next);
+    router.get('/isLoggedIn', function(req, res) {
+        res.send(req.isAuthenticated() ? req.user : "0");
+    });
+
+    router.post('/login', passport.authenticate('login'), function(req, res, next) {
+        if (req) {
+            res.send(req.user);
+        }
     });
 
 	// router.post('/login', passport.authenticate('login', function(err, user, messageObj, next) {

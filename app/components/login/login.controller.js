@@ -14,8 +14,10 @@ app.controller("loginCtrl", function($scope, $http, $state, Account, $stateParam
 
 
     $scope.submit = function() {
+        console.log("Inside submit.");
         var u = $scope.user;
         var redirectState = $scope.postLoginRedirectState;
+        console.log("Submitting login request with info: " + JSON.stringify(u));
         Account.login(u, redirectState)
         .then(function(user) {
             // Login was successful - reset lastUrl
