@@ -48,6 +48,7 @@ module.exports = function(passport) {
     });
 
     router.post('/login', passport.authenticate('login'), function(req, res, next) {
+        // res.send(req.user);
         if (req) {
             res.send(req.user);
         }

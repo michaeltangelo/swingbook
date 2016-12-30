@@ -4,11 +4,14 @@ app.service('Account', function($http, $state, $rootScope, $q) {
   var user = {};
   var errMsg = "";
   var login = function(c, redirectState) {
+      console.log("login called in Account services");
+      console.log(c);
       return $q(function(resolve, reject){
           $http.post('/api/login',{
               username:c.username.toLowerCase(),
               password:c.password
           }).then(function(data) {
+            //   console.log("Post data from /api/login request: "+  data);
               user = data.data;
               isLoggedIn = true;
               //   $rootScope.$broadcast("user-state-change");

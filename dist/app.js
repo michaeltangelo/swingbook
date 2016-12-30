@@ -148,15 +148,23 @@ app.controller("eventsCtrl", ["$scope", "$http", "$state", "Account", function($
     };
 }]);
 
+app.controller("landingCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
+    console.log("landing controller.");
+    $scope.taglines = [
+        "Music rankings suck",
+        "Because they don't account for your taste.",
+        "So find people who rank music like you do."
+    ];
+}]);
+
 app.controller("homeCtrl", ["$scope", "$http", "$state", "Account", function($scope, $http, $state, Account){
     if (!Account.isLoggedIn()) $state.go("login");
-    else $state.go("events");
+    // else $state.go("events");
+
 
     console.log("home controller");
-    $scope.message = "hello michael";
-    $scope.user = {
-        username: "anthony",
-    };
+    $scope.user = Account.user();
+    $scope.message = "Hello, " + $scope.user.username;
     //
     // $http
     // .get("/api/currentUser")
@@ -166,15 +174,6 @@ app.controller("homeCtrl", ["$scope", "$http", "$state", "Account", function($sc
     //         $state.go("login");
     //     }
     // });
-}]);
-
-app.controller("landingCtrl", ["$scope", "$http", "$state", function($scope, $http, $state){
-    console.log("landing controller.");
-    $scope.taglines = [
-        "Music rankings suck",
-        "Because they don't account for your taste.",
-        "So find people who rank music like you do."
-    ];
 }]);
 
 app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", "$stateParams", function($scope, $http, $state, Account, $stateParams){
@@ -199,6 +198,7 @@ app.controller("loginCtrl", ["$scope", "$http", "$state", "Account", "$statePara
         console.log("Submitting login request with info: " + JSON.stringify(u));
         Account.login(u, redirectState)
         .then(function(user) {
+            console.log("Received a reply: " + user);
             // Login was successful - reset lastUrl
             $scope.postLoginRedirectState = "";
         }, function(errMsg) {
@@ -408,11 +408,14 @@ app.service('Account', ["$http", "$state", "$rootScope", "$q", function($http, $
   var user = {};
   var errMsg = "";
   var login = function(c, redirectState) {
+      console.log("login called in Account services");
+      console.log(c);
       return $q(function(resolve, reject){
           $http.post('/api/login',{
               username:c.username.toLowerCase(),
               password:c.password
           }).then(function(data) {
+            //   console.log("Post data from /api/login request: "+  data);
               user = data.data;
               isLoggedIn = true;
               //   $rootScope.$broadcast("user-state-change");

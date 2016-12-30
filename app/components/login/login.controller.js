@@ -20,6 +20,7 @@ app.controller("loginCtrl", function($scope, $http, $state, Account, $stateParam
         console.log("Submitting login request with info: " + JSON.stringify(u));
         Account.login(u, redirectState)
         .then(function(user) {
+            console.log("Received a reply: " + user);
             // Login was successful - reset lastUrl
             $scope.postLoginRedirectState = "";
         }, function(errMsg) {
